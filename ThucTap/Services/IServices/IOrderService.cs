@@ -1,4 +1,5 @@
-﻿using ThucTap.Payloads.DTOs;
+﻿using ThucTap.Entities;
+using ThucTap.Payloads.DTOs;
 using ThucTap.Payloads.Requests.Order;
 using ThucTap.Payloads.Responses;
 
@@ -8,5 +9,8 @@ namespace ThucTap.Services.IServices
     {
         double Statistic(int? month,int? quarter, int? year);
         ResponseObject<OrderDTO> Order(OrderRequest orderRequest, List<OrderDetailRequest> orderDetailRequests);
+        List<OrderDTO> GetAll();
+        ResponseObject<OrderDTO> ChangeOrderStatus(int id);
+
     }
 }

@@ -120,5 +120,14 @@ namespace ThucTap.Services
             dbContext.SaveChanges();
             return responseObject.ResponseSucess("Sửa sản phẩm thành công", product);
         }
+
+        public ResponseObject<Product> UpdateView(int id)
+        {
+            var product = dbContext.Product.FirstOrDefault(x => x.ProductID == id);
+            product.NumberOfViews += 1;
+            dbContext.Update(product);
+            dbContext.SaveChanges();
+            return responseObject.ResponseSucess("Cập nhật lượt xem thành công", product);
+        }
     }
 }

@@ -93,5 +93,22 @@ namespace ThucTap.Services.Implement
             double total = order.Sum(x => x.PriceTotal);
             return total;
         }
+
+        public List<OrderDTO> GetAll()
+        {
+            var listOrder = dbContext.Order.ToList();
+            return converter.EntityToListDTO(listOrder);
+        }
+
+        public ResponseObject<OrderDTO> ChangeOrderStatus(int id)
+        {
+            var order = dbContext.Order.FirstOrDefault(x => x.OrderID == id);
+            if(order == null) 
+                return responseObject.ResponseError(StatusCodes.Status404NotFound,"Không tìm thấy đơn hàng", null);
+            order.OrderStatusID = 3;
+            dbContext.Update(order);
+            dbContext.SaveChanges();
+            return responseObject.ResponseSucess("Chuyển trạng thái đơn hàng thành công",converter.EntityToDTO(order));
+        }
     }
 }

@@ -27,5 +27,16 @@ namespace ThucTap.Controllers
         {
             return Ok(service.Order(orderRequest, orderDetailRequest));
         }
+        [HttpGet("GetAll")]
+        public IActionResult GetAll()
+        {
+            return Ok(service.GetAll());
+        }
+        [HttpPut("ChangeOrderStatus")]
+        public IActionResult ChangeOrderStatus(int id)
+        {
+            return Ok(service.ChangeOrderStatus(id));
+        }
+        
     }
 }

@@ -15,5 +15,6 @@ namespace ThucTap.IServices
         List<Product> GetOutstandingProduct(int productTypeID);
         ResponseObject<ProductReviewDTO> AddProductReview(AddProductReviewRequest request);
         List<ProductReviewDTO> GetProductReview(int productID);
+        ResponseObject<Product> UpdateView(int id);
     }
 }

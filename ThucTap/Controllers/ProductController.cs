@@ -49,5 +49,17 @@ namespace ThucTap.Controllers
         {
             return Ok(_service.DeleteProduct(id));
         }
+        [HttpPost("AddProductReview")]
+        public IActionResult AddProductReview(AddProductReviewRequest request)
+        {
+            return Ok(_service.AddProductReview(request));
+
+        }
+        [HttpPut("UpdateView")]
+        public IActionResult UpdateView(int id)
+        {
+            return Ok(_service.UpdateView(id));
+
+        }
     }
 }
