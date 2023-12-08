@@ -37,6 +37,12 @@ namespace ThucTap.Controllers
         {
             return Ok(service.ChangeOrderStatus(id));
         }
-        
+
+        //[HttpPut("GetPayment")]
+        //public IActionResult GetPayment(double totalAmount, int id)
+        //{
+        //    return Ok(service.GetPayment(totalAmount, id));
+        //}
+
     }
 }

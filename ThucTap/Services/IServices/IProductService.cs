@@ -16,5 +16,6 @@ namespace ThucTap.IServices
         ResponseObject<ProductReviewDTO> AddProductReview(AddProductReviewRequest request);
         List<ProductReviewDTO> GetProductReview(int productID);
         ResponseObject<Product> UpdateView(int id);
+        int NumberOfPurchases(int id);
     }
 }

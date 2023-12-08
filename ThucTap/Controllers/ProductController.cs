@@ -61,5 +61,12 @@ namespace ThucTap.Controllers
             return Ok(_service.UpdateView(id));
 
         }
+        [HttpGet("NumberOfPurchases")]
+        public IActionResult NumberOfPurchases(int id)
+        {
+            return Ok(_service.NumberOfPurchases(id));
+
+        }
+        
     }
 }

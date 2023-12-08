@@ -98,6 +98,14 @@ namespace ThucTap.Services
             return converter.EntityToListDTO(list);
         }
 
+        public int NumberOfPurchases(int id)
+        {
+            var product = dbContext.OrderDetail.FirstOrDefault(x => x.ProductID == id);
+            if (product == null) return 0;
+            var total = dbContext.OrderDetail.Where(x => x.ProductID == id).Sum(x => x.Quantity);
+            return total;
+        }
+
         public async Task<ResponseObject<Product>> UpdateProduct(UpdateProductRequest request)
         {
             var product = dbContext.Product.FirstOrDefault(x => x.ProductID == request.ProductID);
