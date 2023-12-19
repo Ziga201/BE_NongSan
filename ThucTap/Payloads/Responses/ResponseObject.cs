@@ -3,17 +3,17 @@
     public class ResponseObject<T>
     {
         public int Status { get; set; }
-        public string Messege { get; set; }
+        public string Message { get; set; }
         public T Data { get; set; }
 
         public ResponseObject()
         {
         }
 
-        public ResponseObject(int status, string messege, T data)
+        public ResponseObject(int status, string message, T data)
         {
             Status = status;
-            Messege = messege;
+            Message = message;
             Data = data;
         }
         public ResponseObject<T> ResponseSucess(string message, T data)

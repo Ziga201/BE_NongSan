@@ -11,6 +11,6 @@ namespace ThucTap.Services.IServices
         ResponseObject<ProductType> AddProductType(AddProductTypeRequest request);
         ResponseObject<ProductType> UpdateProductType(UpdateProductTypeRequest request);
         ResponseObject<ProductType> DeleteProductType(int id);
-        PageResult<ProductType> GetAll(Pagination pagination);
+        List<ProductType> GetAll();
     }
 }

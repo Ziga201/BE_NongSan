@@ -3,6 +3,5 @@
     public class AddProductTypeRequest
     {
         public string NameProductType { get; set; }
-        public string ImageTypeProduct { get; set; }
     }
 }

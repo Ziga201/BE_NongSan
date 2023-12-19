@@ -22,24 +22,24 @@ namespace ThucTap.Controllers
             _service = new ProductTypeService();
         }
         [HttpPost("AddProductType")]
-        public IActionResult AddProductType(AddProductTypeRequest request)
+        public IActionResult AddProductType([FromForm]AddProductTypeRequest request)
         {
             return Ok(_service.AddProductType(request));
         }
         [HttpPut("UpdateProductType")]
-        public IActionResult UpdateProductType(UpdateProductTypeRequest request)
+        public IActionResult UpdateProductType([FromForm] UpdateProductTypeRequest request)
         {
             return Ok(_service.UpdateProductType(request));
         }
-        [HttpDelete("DeleteProductType")]
+        [HttpDelete("DeleteProductType/{id}")]
         public IActionResult DeleteProductType(int id)
         {
             return Ok(_service.DeleteProductType(id));
         }
         [HttpGet("GetAll")]
-        public IActionResult GetAll([FromQuery] Pagination pagination)
+        public IActionResult GetAll()
         {
-            return Ok(_service.GetAll(pagination));
+            return Ok(_service.GetAll());
         }
     }
 }

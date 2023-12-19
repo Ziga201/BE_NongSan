@@ -19,7 +19,6 @@ namespace ThucTap.Services.Implement
         {
             ProductType productType = new ProductType();
             productType.NameProductType = request.NameProductType;
-            productType.ImageTypeProduct = request.ImageTypeProduct;
             productType.CreatedAt = DateTime.Now;
             productType.UpdateAt = DateTime.Now;
             dbContext.Add(productType);
@@ -37,11 +36,10 @@ namespace ThucTap.Services.Implement
             return _responseObject.ResponseSucess("Xoá loại sản phẩm thành công", productType);
         }
 
-        public PageResult<ProductType> GetAll(Pagination pagination)
+        public List<ProductType> GetAll()
         {
-            var list = dbContext.ProductType.AsQueryable();
-            var result = PageResult<ProductType>.ToPageResult(pagination, list);
-            return new PageResult<ProductType>(pagination, result);
+            var list = dbContext.ProductType.ToList();
+            return list;
         }
 
         public ResponseObject<ProductType> UpdateProductType(UpdateProductTypeRequest request)
@@ -50,7 +48,6 @@ namespace ThucTap.Services.Implement
             if (productType == null)
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Loại sản phẩm không tồn tại", null);
             productType.NameProductType = request.NameProductType;
-            productType.ImageTypeProduct = request.ImageTypeProduct;
             productType.CreatedAt = DateTime.Now;
             productType.UpdateAt = DateTime.Now;
             dbContext.Update(productType);

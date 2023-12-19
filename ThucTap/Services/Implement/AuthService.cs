@@ -11,6 +11,7 @@ using ThucTap.IServices;
 using ThucTap.Payloads.Converters;
 using ThucTap.Payloads.DTOs;
 using ThucTap.Payloads.Requests;
+using ThucTap.Payloads.Requests.Auth;
 using ThucTap.Payloads.Responses;
 using BCryptNet = BCrypt.Net.BCrypt;
 
@@ -53,7 +54,6 @@ namespace ThucTap.Services
                 {
                     new Claim("Id", account.AccountID.ToString()),
                     new Claim("Username", account.UserName),
-                    new Claim("Avatar", account.Avatar),
                     new Claim(ClaimTypes.Role, role.AuthorityName)
                 }),
                 Expires = DateTime.Now.AddHours(4),
@@ -100,15 +100,15 @@ namespace ThucTap.Services
             if (dbContext.Account.Any(x => x.Email == request.Email))
                 return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Email đã tồn tại", null);
 
-            //var avatarFile = await UploadImage.Upfile(request.Avatar);
+            var avatarFile = await UploadImage.Upfile(request.Avatar);
 
             Account account = new Account();
             account.UserName = request.UserName;
-            //account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             account.Password = BCryptNet.HashPassword(request.Password);
-            account.DecentralizationID = 3;
+            account.DecentralizationID = 2;
             account.Email = request.Email;
-
+            account.Status = nameof(Enum.Status.INACTIVE);
             account.CreatedAt = DateTime.Now;
             account.UpdateAt = DateTime.Now;
             dbContext.Add(account);
@@ -154,11 +154,13 @@ namespace ThucTap.Services
         public ResponseObject<TokenDTO> Login(LoginRequest request)
         {
             var account = dbContext.Account.FirstOrDefault(x => x.UserName == request.UserName);
+            if (account == null)
+                return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản hoặc mật khẩu không chính xác", null);
             if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Vui lòng điền đầy đủ thông tin đăng nhập", null);
             bool checkPass = BCryptNet.Verify(request.Password, account.Password);
             if (!checkPass)
-                return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Mật khẩu không chính xác", null);
+                return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản hoặc mật khẩu không chính xác", null);
             if(account.Status == nameof(Enum.Status.INACTIVE))
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "tài khoản chưa được kích hoạt", null);
 
@@ -251,6 +253,43 @@ namespace ThucTap.Services
             dbContext.Update(account);
             dbContext.SaveChanges();
             return "Kích hoạt tài khoản thành công !";
+        }
+
+        public async Task<ResponseObject<RegisterDTO>> UpdateAccount(UpdateAccountRequest request)
+        {
+            var account = dbContext.Account.FirstOrDefault(x => x.AccountID == request.AccountID);
+            if (account == null)
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản không tồn tại", null);
+            if (!ValidatePassword.isValidPassword(request.Password))
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Mật khẩu bao gồm chữ, số và ký tự đặc biệt", null);
+            if (!ValidateEmail.isValidEmail(request.Email))
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Email không hợp lệ", null);
+
+            if (account.Email != request.Email)
+                if (dbContext.Account.Any(x => x.Email == request.Email))
+                    return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Email đã tồn tại", null);
+
+            var avatarFile = await UploadImage.Upfile(request.Avatar);
+
+            account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            account.Password = BCryptNet.HashPassword(request.Password);
+            account.DecentralizationID = 2;
+            account.Email = request.Email;
+            account.Status = nameof(Enum.Status.ACTIVE);
+            account.CreatedAt = DateTime.Now;
+            account.UpdateAt = DateTime.Now;
+            dbContext.Update(account);
+            dbContext.SaveChanges();
+            return responseObject.ResponseSucess("Cập nhật tài khoản thành công", converter.EntityToDTO(account));
+        }
+        public ResponseObject<RegisterDTO> DeleteAccount(int id)
+        {
+            var account = dbContext.Account.FirstOrDefault(x => x.AccountID == id);
+            if (account == null)
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản không tồn tại", null);
+            dbContext.Remove(account);
+            dbContext.SaveChanges();
+            return responseObject.ResponseSucess("Xoá tài khoản thành công", converter.EntityToDTO(account));
         }
     }
 }

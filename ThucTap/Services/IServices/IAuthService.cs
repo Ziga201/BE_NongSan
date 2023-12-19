@@ -1,6 +1,8 @@
-﻿using ThucTap.Entities;
+﻿using CloudinaryDotNet.Actions;
+using ThucTap.Entities;
 using ThucTap.Payloads.DTOs;
 using ThucTap.Payloads.Requests;
+using ThucTap.Payloads.Requests.Auth;
 using ThucTap.Payloads.Responses;
 
 namespace ThucTap.IServices
@@ -15,7 +17,8 @@ namespace ThucTap.IServices
         ResponseObject<MailDTO> ForgotPassword(string mail);
         string CreateNewPassword(CreateNewPasswordRequest request);
         string ActiveAccount(ActiveAccountRequest request);
-
+        Task<ResponseObject<RegisterDTO>> UpdateAccount(UpdateAccountRequest request);
+        ResponseObject<RegisterDTO> DeleteAccount(int id);
 
     }
 }

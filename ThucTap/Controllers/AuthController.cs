@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ThucTap.IServices;
 using ThucTap.Payloads.Requests;
+using ThucTap.Payloads.Requests.Auth;
 
 namespace ThucTap.Controllers
 {
@@ -32,7 +33,7 @@ namespace ThucTap.Controllers
             return Ok(_service.RenewAccessToken(request));
         }
         [HttpGet("GetAll")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public IActionResult GetAll()
         {
             return Ok(_service.GetAll());
@@ -51,6 +52,16 @@ namespace ThucTap.Controllers
         public IActionResult ActiveAccount(ActiveAccountRequest request)
         {
             return Ok(_service.ActiveAccount(request));
+        }
+        [HttpPut("UpdateAccount")]
+        public async Task<IActionResult> UpdateAccount([FromForm]UpdateAccountRequest request)
+        {
+            return Ok(await _service.UpdateAccount(request));
+        }
+        [HttpDelete("DeleteAccount/{id}")]
+        public IActionResult DeleteAccount(int id)
+        {
+            return Ok(_service.DeleteAccount(id));
         }
     }
 }

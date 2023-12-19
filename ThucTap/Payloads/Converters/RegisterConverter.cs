@@ -11,12 +11,16 @@ namespace ThucTap.Payloads.Converters
         {
             return new RegisterDTO()
             {
+                AccountID = account.AccountID,
                 UserName = account.UserName,
-                //Avatar = account.Avatar,
-                AuthorityName = dbContext.Decentralization.FirstOrDefault(x => x.DecentralizationID == account.DecentralizationID).AuthorityName,
+                Password = account.Password,
+                Avatar = account.Avatar,
                 Email = account.Email,
+                Status = account.Status,
+                AuthorityName = dbContext.Decentralization.FirstOrDefault(x => x.DecentralizationID == account.DecentralizationID).AuthorityName,
                 CreatedAt = DateTime.UtcNow,
             };
         }
+
     }
 }
