@@ -53,6 +53,11 @@ namespace ThucTap.Controllers
         {
             return Ok(_service.ActiveAccount(request));
         }
+        [HttpPost("AddAccount")]
+        public async Task<IActionResult> AddAccount([FromForm] RegisterRequest request)
+        {
+            return Ok(await _service.AddAccount(request));
+        }
         [HttpPut("UpdateAccount")]
         public async Task<IActionResult> UpdateAccount([FromForm]UpdateAccountRequest request)
         {
@@ -62,6 +67,11 @@ namespace ThucTap.Controllers
         public IActionResult DeleteAccount(int id)
         {
             return Ok(_service.DeleteAccount(id));
+        }
+        [HttpGet("GetAccountByID/{id}")]
+        public IActionResult GetAccountByID(int id)
+        {
+            return Ok(_service.GetAccountByID(id));
         }
     }
 }

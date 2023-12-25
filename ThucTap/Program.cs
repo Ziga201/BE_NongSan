@@ -44,8 +44,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors(options => options
-    //.WithOrigins("http://localhost:3000") // Thêm domain của ứng dụng React của bạn    
-    .AllowAnyOrigin() // cho phép từ tất cả các domain
+.WithOrigins("http://localhost:3000") // Thêm domain của ứng dụng React của bạn    
+                                      //.AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
 

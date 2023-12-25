@@ -7,8 +7,7 @@ namespace ThucTap.Entities
         [Key]
         public int CartID { get; set; }
         public int UserID { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdateAt { get; set; }
         public User User { get; set; }
+        public List<CartItem> CartItems { get; set; }
     }
 }
