@@ -32,6 +32,11 @@ namespace ThucTap.Controllers
         {
             return Ok(service.GetAll());
         }
+        [HttpGet("GetAllPayment")]
+        public IActionResult GetAllPayment()
+        {
+            return Ok(service.GetAllPayment());
+        }
         [HttpPut("ChangeOrderStatus")]
         public IActionResult ChangeOrderStatus(int id)
         {

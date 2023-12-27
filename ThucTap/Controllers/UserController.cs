@@ -33,9 +33,14 @@ namespace ThucTap.Controllers
             return Ok(_service.DeleteUser(id));
         }
         [HttpGet("GetAll")]
-        public IActionResult GetAll([FromQuery]Pagination pagination)
+        public IActionResult GetAll()
         {
-            return Ok(_service.GetAll(pagination));
+            return Ok(_service.GetAll());
+        }
+        [HttpGet("GetByID")]
+        public IActionResult GetByID(int id)
+        {
+            return Ok(_service.GetByID(id));
         }
 
     }

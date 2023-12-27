@@ -46,11 +46,19 @@ namespace ThucTap.Services
             return responseObject.ResponseSucess("Xoá thông tin người dùng thành công", converter.EntityToDTO(user));
         }
 
-        public PageResult<User> GetAll(Pagination pagination)
+        public List<User> GetAll()
         {
             var listUser = dbContext.User.ToList();
-            var result  = PageResult<User>.ToPageResult(pagination, listUser);
-            return new PageResult<User>(pagination, result);
+            return listUser;
+        }
+
+        public ResponseObject<UserDTO> GetByID(int id)
+        {
+            var user = dbContext.User.FirstOrDefault(x => x.UserID == id);
+            if (user == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Người dùng không tồn tại", null);
+            else
+                return responseObject.ResponseSucess("Thông tin người dùng", converter.EntityToDTO(user));
         }
 
         public ResponseObject<UserDTO> UpdateUser(UpdateUserRequest request)

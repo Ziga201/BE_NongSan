@@ -12,6 +12,7 @@ namespace ThucTap.IServices
         ResponseObject<UserDTO> AddUser(AddUserRequest request);
         ResponseObject<UserDTO> UpdateUser(UpdateUserRequest request);
         ResponseObject<UserDTO> DeleteUser(int id);
-        PageResult<User> GetAll(Pagination pagination);
+        List<User> GetAll();
+        ResponseObject<UserDTO> GetByID(int id);
     }
 }

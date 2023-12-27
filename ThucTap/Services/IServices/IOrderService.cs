@@ -11,7 +11,8 @@ namespace ThucTap.Services.IServices
         ResponseObject<OrderDTO> Order(OrderRequest orderRequest, List<OrderDetailRequest> orderDetailRequests);
         List<OrderDTO> GetAll();
         ResponseObject<OrderDTO> ChangeOrderStatus(int id);
-        //string GetPayment(double totalAmount, int id);
+        List<Payment> GetAllPayment();
+
 
     }
 }

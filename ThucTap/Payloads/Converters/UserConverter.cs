@@ -12,6 +12,7 @@ namespace ThucTap.Payloads.Converters
             return new UserDTO()
             {
                 UserName = user.UserName,
+                Email = dbContext.Account.FirstOrDefault(x => x.AccountID == user.AccountID).Email,
                 Phone = user.Phone,
                 Address = user.Address,
                 AccountName = dbContext.Account.FirstOrDefault(x => x.AccountID == user.AccountID).UserName

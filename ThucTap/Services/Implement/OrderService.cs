@@ -85,7 +85,7 @@ namespace ThucTap.Services.Implement
 
             }
             else
-                return responseObject.ResponseSucess("Đặt hàng thành công", converter.EntityToDTO(order));
+                return responseObject.ResponseSucess("http://localhost:3000/confirm", converter.EntityToDTO(order));
 
 
         }
@@ -159,7 +159,7 @@ namespace ThucTap.Services.Implement
         private string GetPayment(double totalAmount, int orderID)
         {
             //Get Config Info
-            string vnp_Returnurl = "https://www.aia.com.vn/vi/dich-vu-khach-hang/cac-kenh-dong-phi-bao-hiem/thanh-toan-thanh-cong.html";
+            string vnp_Returnurl = "http://localhost:3000/confirm";
             string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; //URL thanh toan cua VNPAY 
             string vnp_TmnCode = "ADKF5BBF"; //Ma website
             string vnp_HashSecret = "BSTZNVIFXKNXZXBSJTNLHJIOJRJGDQMY"; //Chuoi bi mat
@@ -196,6 +196,11 @@ namespace ThucTap.Services.Implement
             return paymentUrl;
             //log.InfoFormat("VNPAY URL: {0}", paymentUrl);
             //Response.Redirect(paymentUrl);
+        }
+
+        public List<Payment> GetAllPayment()
+        {
+            return dbContext.Payment.ToList();
         }
     }
 }
