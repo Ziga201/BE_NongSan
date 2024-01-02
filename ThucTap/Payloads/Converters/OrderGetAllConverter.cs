@@ -1,18 +1,22 @@
-﻿using MailKit.Search;
-using Org.BouncyCastle.Asn1.X509;
-using System.Numerics;
+﻿using Microsoft.EntityFrameworkCore;
 using ThucTap.Entities;
 using ThucTap.Payloads.DTOs;
 using ThucTap.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ThucTap.Payloads.Converters
 {
-    public class OrderConverter : BaseService
+    public class OrderGetAllConverter:BaseService
     {
-        public OrderDTO EntityToDTO(Order order)
+        private readonly OrderDetailConverter converter;
+
+        public OrderGetAllConverter()
         {
-            return new OrderDTO()
+            converter = new OrderDetailConverter();
+        }
+
+        public OrderGetAllDTO EntityToDTO(Order order)
+        {
+            return new OrderGetAllDTO()
             {
                 OrderID = order.OrderID,
                 PaymentMethod = dbContext.Payment.FirstOrDefault(x => x.PaymentID == order.PaymentID).PaymentMethod,
@@ -20,11 +24,11 @@ namespace ThucTap.Payloads.Converters
                 OriginalPrice = order.OriginalPrice,
                 ActualPrice = order.ActualPrice,
                 FullName = order.FullName,
-                Email = order.Email,
                 Phone = order.Phone,
                 Address = order.Address,
                 OrderName = dbContext.OrderStatus.FirstOrDefault(x => x.OrderStatusID == order.OrderStatusID).OrderName,
                 CreatedAt = order.CreatedAt,
+                OrderDetailDTOs = dbContext.OrderDetail.Where(x => x.OrderID == order.OrderID).Select(x => converter.EntityToDTO(x)).ToList(),
             };
         }
     }

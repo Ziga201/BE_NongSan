@@ -32,6 +32,16 @@ namespace ThucTap.Controllers
         {
             return Ok(service.GetAll());
         }
+         [HttpGet("GetAllOrderByID/{userID}")]
+        public IActionResult GetAllOrderByID(int userID)
+        {
+            return Ok(service.GetAllOrderByID(userID));
+        }
+        [HttpGet("GetAllOrderDetail/{orderID}")]
+        public IActionResult GetAllOrderDetail(int orderID)
+        {
+            return Ok(service.GetAllOrderDetail(orderID));
+        }
         [HttpGet("GetAllPayment")]
         public IActionResult GetAllPayment()
         {
@@ -41,6 +51,11 @@ namespace ThucTap.Controllers
         public IActionResult ChangeOrderStatus(int id)
         {
             return Ok(service.ChangeOrderStatus(id));
+        }
+        [HttpDelete("DeleteOrder/{id}")]
+        public IActionResult DeleteOrder(int id)
+        {
+            return Ok(service.DeleteOrder(id));
         }
 
 

@@ -37,7 +37,7 @@ namespace ThucTap.Controllers
         {
             return Ok(_service.GetAll());
         }
-        [HttpGet("GetByID")]
+        [HttpGet("GetByID/{id}")]
         public IActionResult GetByID(int id)
         {
             return Ok(_service.GetByID(id));

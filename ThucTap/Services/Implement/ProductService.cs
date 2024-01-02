@@ -29,13 +29,13 @@ namespace ThucTap.Services
         {
             if (!dbContext.ProductType.Any(x => x.ProductTypeID == request.ProductTypeID))
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Loại sản phẩm không tồn tại", null);
-            var avatarFile = await UploadImage.Upfile(request.AvartarImageProduct);
+            var avatarFile = await UploadImage.Upfile(request.AvatarImageProduct);
 
             Product product = new Product();
             product.ProductTypeID = request.ProductTypeID;
             product.NameProduct = request.NameProduct;
             product.Price = request.Price;
-            product.AvartarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            product.AvatarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             product.Title = request.Title;
             product.Discount = request.Discount;
             product.Status = nameof(Enum.Status.ACTIVE);
@@ -113,12 +113,12 @@ namespace ThucTap.Services
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Sản phẩm không tồn tại", null);
             if (!dbContext.ProductType.Any(x => x.ProductTypeID == request.ProductTypeID))
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Loại sản phẩm không tồn tại", null);
-            var avatarFile = await UploadImage.Upfile(request.AvartarImageProduct);
+            var avatarFile = await UploadImage.Upfile(request.AvatarImageProduct);
 
             product.ProductTypeID = request.ProductTypeID;
             product.NameProduct = request.NameProduct;
             product.Price = request.Price;
-            product.AvartarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            product.AvatarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             product.Title = request.Title;
             product.Discount = request.Discount;
             product.Status = request.Status;

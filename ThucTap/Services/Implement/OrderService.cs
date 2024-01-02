@@ -1,5 +1,6 @@
 ﻿using Azure;
 using CloudinaryDotNet;
+using System;
 using System.Numerics;
 using ThucTap.Entities;
 using ThucTap.Handle.Payment;
@@ -9,7 +10,6 @@ using ThucTap.Payloads.DTOs;
 using ThucTap.Payloads.Requests.Order;
 using ThucTap.Payloads.Responses;
 using ThucTap.Services.IServices;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ThucTap.Services.Implement
 {
@@ -17,12 +17,16 @@ namespace ThucTap.Services.Implement
     {
         private readonly ResponseObject<OrderDTO> responseObject;
         private readonly OrderConverter converter;
+        private readonly OrderDetailConverter orderDetailConverter;
+        private readonly OrderGetAllConverter orderGetAllConverter;
         private readonly Utils utils;
 
         public OrderService()
         {
             responseObject = new ResponseObject<OrderDTO>();
             converter = new OrderConverter();
+            orderDetailConverter = new OrderDetailConverter();
+            orderGetAllConverter = new OrderGetAllConverter();
             utils = new Utils();
         }
 
@@ -142,7 +146,8 @@ namespace ThucTap.Services.Implement
         public List<OrderDTO> GetAll()
         {
             var listOrder = dbContext.Order.ToList();
-            return converter.EntityToListDTO(listOrder);
+            var listOrderDTO = listOrder.Select(converter.EntityToDTO).ToList();
+            return listOrderDTO;
         }
 
         public ResponseObject<OrderDTO> ChangeOrderStatus(int id)
@@ -201,6 +206,32 @@ namespace ThucTap.Services.Implement
         public List<Payment> GetAllPayment()
         {
             return dbContext.Payment.ToList();
+        }
+
+        public List<OrderDetailDTO> GetAllOrderDetail(int orderID)
+        {
+            var listOrderDetail = dbContext.OrderDetail.Where(x => x.OrderID == orderID);
+            var listOrderDetailDTO = listOrderDetail.Select(orderDetailConverter.EntityToDTO).ToList();
+            return listOrderDetailDTO;
+        }
+
+        public List<OrderGetAllDTO> GetAllOrderByID(int userID)
+        {
+            var listOrder = dbContext.Order.Where(x => x.UserID == userID);
+            var listOrderGetAllDTO = listOrder.Select(orderGetAllConverter.EntityToDTO).ToList();
+            return listOrderGetAllDTO;
+        }
+
+        public ResponseObject<OrderDTO> DeleteOrder(int id)
+        {
+            var order = dbContext.Order.FirstOrDefault(x => x.OrderID == id);
+            if (order == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Order không tồn tại",null);
+
+            dbContext.Remove(order);
+            dbContext.SaveChanges();
+            return responseObject.ResponseSucess("Hủy đơn hàng thành công",converter.EntityToDTO(order));
+
         }
     }
 }

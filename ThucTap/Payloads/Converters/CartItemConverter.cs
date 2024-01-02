@@ -15,7 +15,7 @@ namespace ThucTap.Payloads.Converters
                 ProductID = cartItem.ProductID,
                 NameProduct = dbContext.Product.FirstOrDefault(x => x.ProductID == cartItem.ProductID).NameProduct,
                 Price = dbContext.Product.FirstOrDefault(x => x.ProductID == cartItem.ProductID).Price,
-                AvartarImageProduct = dbContext.Product.FirstOrDefault(x => x.ProductID == cartItem.ProductID).AvartarImageProduct,
+                AvartarImageProduct = dbContext.Product.FirstOrDefault(x => x.ProductID == cartItem.ProductID).AvatarImageProduct,
                 Quantity = cartItem.Quantity,
             };
         }
