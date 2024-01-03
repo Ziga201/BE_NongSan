@@ -7,7 +7,7 @@
 
         public string NameProduct { get; set; }
         public float Price { get; set; }
-        public string AvartarImageProduct { get; set; }
+        public string AvatarImageProduct { get; set; }
         public int Quantity { get; set; }
     }
 }

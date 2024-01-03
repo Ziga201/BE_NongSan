@@ -85,7 +85,7 @@ namespace ThucTap.Services
         }
 
 
-        public async Task<ResponseObject<RegisterDTO>> Register(RegisterRequest request)
+        public ResponseObject<RegisterDTO> Register(RegisterRequest request)
         {
             if (dbContext.Account.Any(x => x.UserName == request.UserName))
             {
@@ -100,15 +100,14 @@ namespace ThucTap.Services
             if (dbContext.Account.Any(x => x.Email == request.Email))
                 return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Email đã tồn tại", null);
 
-            var avatarFile = await UploadImage.Upfile(request.Avatar);
 
             Account account = new Account();
             account.UserName = request.UserName;
-            account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             account.Password = BCryptNet.HashPassword(request.Password);
-            account.DecentralizationID = 2;
             account.Email = request.Email;
             account.Status = nameof(Enum.Status.INACTIVE);
+            account.DecentralizationID = 1;
+            account.Avatar = "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg";
             account.CreatedAt = DateTime.Now;
             account.UpdateAt = DateTime.Now;
             dbContext.Add(account);
@@ -134,7 +133,7 @@ namespace ThucTap.Services
             {
                 MailTo = account.Email,
                 Subject = "Mã xác thực tài khoản",
-                Content = $"Mã xác thực là {confirmEmail.CodeActive}"
+                Content = $"<table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" style=\"max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 5px;\">\r\n        <tr>\r\n            <td align=\"\">\r\n                <h2 style=\"color: #3498db;\">Công ty Đông Anh Group!</h2>\r\n                <p>Cảm ơn bạn đã đăng ký. Đây là mã kích hoạt tài khoản của bạn:</p>\r\n                <p style=\"font-size: 24px; font-weight: bold; color: #3498db;\">[{confirmEmail.CodeActive}]</p>\r\n                <p>Nếu bạn không thực hiện đăng ký, xin vui lòng bỏ qua email này.</p>\r\n                <p>Trân trọng,</p>\r\n                <p style=\"color: #333; font-weight: bold;\">[Web bán hàng]</p>\r\n            </td>\r\n        </tr>\r\n    </table>"
             });
             return responseObject.ResponseSucess("Đăng ký tài khoản thành công, vui lòng kiểm tra email để nhận mã xác thực tài khoản", 
                 converter.EntityToDTO(account));
@@ -190,7 +189,7 @@ namespace ThucTap.Services
             ConfirmEmail confirmEmail = new ConfirmEmail();
             confirmEmail.AccountID = account.AccountID;
             confirmEmail.CodeActive = new Random().Next(100000, 999999);
-            confirmEmail.ExpriedTime = DateTime.Now.AddHours(1);
+            confirmEmail.ExpriedTime = DateTime.Now.AddMinutes(5);
             confirmEmail.IsConfirmed = false;
             dbContext.Add(confirmEmail);
             dbContext.SaveChanges();
@@ -205,7 +204,7 @@ namespace ThucTap.Services
 
 
 
-            return responseMailObject.ResponseSucess("Đã gửi mã xác thực, mã có hiệu lực trong 1 giờ! Vui lòng kiểm tra Mail", null);
+            return responseMailObject.ResponseSucess("Đã gửi mã xác thực, mã có hiệu lực trong 5 phút! Vui lòng kiểm tra Mail", null);
         }
 
         public string CreateNewPassword(CreateNewPasswordRequest request)
@@ -271,12 +270,15 @@ namespace ThucTap.Services
 
             var avatarFile = await UploadImage.Upfile(request.Avatar);
 
-            account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+
             account.Password = BCryptNet.HashPassword(request.Password);
-            account.DecentralizationID = request.DecentralizationID ?? 2;
             account.Email = request.Email;
-            account.Status = request.Status ?? nameof(Enum.Status.INACTIVE);
-            account.CreatedAt = DateTime.Now;
+            account.Status = request.Status ?? "ACTIVE";
+            account.DecentralizationID = request.DecentralizationID ?? 1;
+            account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            account.FullName = request.FullName;
+            account.Phone = request.Phone;
+            account.Address = request.Address;
             account.UpdateAt = DateTime.Now;
             dbContext.Update(account);
             dbContext.SaveChanges();
@@ -299,7 +301,7 @@ namespace ThucTap.Services
             return account;
         }
 
-        public async Task<ResponseObject<RegisterDTO>> AddAccount(RegisterRequest request)
+        public async Task<ResponseObject<RegisterDTO>> AddAccount(AddAccountRequest request)
         {
             if (dbContext.Account.Any(x => x.UserName == request.UserName))
             {
@@ -318,11 +320,14 @@ namespace ThucTap.Services
 
             Account account = new Account();
             account.UserName = request.UserName;
-            account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             account.Password = BCryptNet.HashPassword(request.Password);
-            account.DecentralizationID = request.DecentralizationID ?? 2;
             account.Email = request.Email;
-            account.Status = request.Status ?? nameof(Enum.Status.INACTIVE);
+            account.Status = request.Status;
+            account.DecentralizationID = request.DecentralizationID;
+            account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            account.FullName = request.FullName;
+            account.Phone = request.Phone;
+            account.Address = request.Address;
             account.CreatedAt = DateTime.Now;
             account.UpdateAt = DateTime.Now;
             dbContext.Add(account);

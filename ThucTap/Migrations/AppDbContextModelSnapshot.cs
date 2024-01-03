@@ -30,6 +30,9 @@ namespace ThucTap.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountID"));
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
@@ -40,9 +43,17 @@ namespace ThucTap.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResetPasswordToken")
@@ -77,12 +88,12 @@ namespace ThucTap.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartID"));
 
-                    b.Property<int>("UserID")
+                    b.Property<int>("AccountID")
                         .HasColumnType("int");
 
                     b.HasKey("CartID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("AccountID");
 
                     b.ToTable("Cart");
                 });
@@ -171,6 +182,9 @@ namespace ThucTap.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
 
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
                     b.Property<double?>("ActualPrice")
                         .HasColumnType("float");
 
@@ -205,16 +219,13 @@ namespace ThucTap.Migrations
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("int");
-
                     b.HasKey("OrderID");
+
+                    b.HasIndex("AccountID");
 
                     b.HasIndex("OrderStatusID");
 
                     b.HasIndex("PaymentID");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("Order");
                 });
@@ -388,6 +399,9 @@ namespace ThucTap.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductReviewID"));
 
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
                     b.Property<string>("ContentRated")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -412,14 +426,11 @@ namespace ThucTap.Migrations
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("int");
-
                     b.HasKey("ProductReviewID");
 
-                    b.HasIndex("ProductID");
+                    b.HasIndex("AccountID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("ProductID");
 
                     b.ToTable("ProductReview");
                 });
@@ -447,42 +458,6 @@ namespace ThucTap.Migrations
                     b.ToTable("ProductType");
                 });
 
-            modelBuilder.Entity("ThucTap.Entities.User", b =>
-                {
-                    b.Property<int>("UserID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"));
-
-                    b.Property<int>("AccountID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserID");
-
-                    b.HasIndex("AccountID");
-
-                    b.ToTable("User");
-                });
-
             modelBuilder.Entity("ThucTap.Entities.Account", b =>
                 {
                     b.HasOne("ThucTap.Entities.Decentralization", "Decentralization")
@@ -496,13 +471,13 @@ namespace ThucTap.Migrations
 
             modelBuilder.Entity("ThucTap.Entities.Cart", b =>
                 {
-                    b.HasOne("ThucTap.Entities.User", "User")
+                    b.HasOne("ThucTap.Entities.Account", "Account")
                         .WithMany()
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("ThucTap.Entities.CartItem", b =>
@@ -537,6 +512,12 @@ namespace ThucTap.Migrations
 
             modelBuilder.Entity("ThucTap.Entities.Order", b =>
                 {
+                    b.HasOne("ThucTap.Entities.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ThucTap.Entities.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusID")
@@ -549,17 +530,11 @@ namespace ThucTap.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ThucTap.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Account");
 
                     b.Navigation("OrderStatus");
 
                     b.Navigation("Payment");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ThucTap.Entities.OrderDetail", b =>
@@ -605,32 +580,21 @@ namespace ThucTap.Migrations
 
             modelBuilder.Entity("ThucTap.Entities.ProductReview", b =>
                 {
-                    b.HasOne("ThucTap.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ThucTap.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ThucTap.Entities.User", b =>
-                {
                     b.HasOne("ThucTap.Entities.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ThucTap.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Account");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ThucTap.Entities.Cart", b =>

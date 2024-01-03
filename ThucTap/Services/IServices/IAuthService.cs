@@ -9,7 +9,7 @@ namespace ThucTap.IServices
 {
     public interface IAuthService
     {
-        Task<ResponseObject<RegisterDTO>> Register(RegisterRequest request);
+        ResponseObject<RegisterDTO> Register(RegisterRequest request);
         TokenDTO GenerateAccessToken(Account account);
         ResponseObject<TokenDTO> RenewAccessToken(RenewAccessTokenRequest request);
         ResponseObject<TokenDTO> Login(LoginRequest request);
@@ -17,7 +17,7 @@ namespace ThucTap.IServices
         ResponseObject<MailDTO> ForgotPassword(string mail);
         string CreateNewPassword(CreateNewPasswordRequest request);
         string ActiveAccount(ActiveAccountRequest request);
-        Task<ResponseObject<RegisterDTO>> AddAccount(RegisterRequest request);
+        Task<ResponseObject<RegisterDTO>> AddAccount(AddAccountRequest request);
         Task<ResponseObject<RegisterDTO>> UpdateAccount(UpdateAccountRequest request);
         ResponseObject<RegisterDTO> DeleteAccount(int id);
         Account GetAccountByID(int id);

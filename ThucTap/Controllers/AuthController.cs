@@ -18,9 +18,9 @@ namespace ThucTap.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromForm]RegisterRequest request)
+        public IActionResult Register([FromForm]RegisterRequest request)
         {
-            return Ok(await _service.Register(request));
+            return Ok(_service.Register(request));
         }
         [HttpPut("Login")]
         public IActionResult Login([FromForm] LoginRequest request)
@@ -54,7 +54,7 @@ namespace ThucTap.Controllers
             return Ok(_service.ActiveAccount(request));
         }
         [HttpPost("AddAccount")]
-        public async Task<IActionResult> AddAccount([FromForm] RegisterRequest request)
+        public async Task<IActionResult> AddAccount([FromForm] AddAccountRequest request)
         {
             return Ok(await _service.AddAccount(request));
         }

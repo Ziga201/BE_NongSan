@@ -18,10 +18,9 @@ namespace ThucTap.Context
         public virtual DbSet<ProductImage> ProductImage { get; set; }
         public virtual DbSet<ProductReview> ProductReview { get; set; }
         public virtual DbSet<ProductType> ProductType { get; set; }
-        public virtual DbSet<User> User { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer($"Server = ZIGA\\SQLEXPRESS; Database = ThucTap; Trusted_Connection = True; " +
+            optionsBuilder.UseSqlServer($"Server = ZIGA\\SQLEXPRESS; Database = QLBanNongSan; Trusted_Connection = True; " +
                 $"TrustServerCertificate=True");
         }
     }

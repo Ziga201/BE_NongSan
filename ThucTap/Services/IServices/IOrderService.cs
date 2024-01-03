@@ -10,7 +10,7 @@ namespace ThucTap.Services.IServices
         double Statistic(int? month,int? quarter, int? year);
         ResponseObject<OrderDTO> Order(OrderRequest orderRequest, List<OrderDetailRequest> orderDetailRequests);
         List<OrderDTO> GetAll();
-        List<OrderGetAllDTO> GetAllOrderByID(int userID);
+        List<OrderGetAllDTO> GetAllOrderByID(int accountID);
         List<OrderDetailDTO> GetAllOrderDetail(int orderID);
         ResponseObject<OrderDTO> ChangeOrderStatus(int id);
         List<Payment> GetAllPayment();

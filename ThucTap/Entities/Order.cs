@@ -6,7 +6,7 @@ namespace ThucTap.Entities
     {
         public int OrderID { get; set; }
         public int PaymentID { get; set; }
-        public int UserID { get; set; }
+        public int AccountID { get; set; }
         public double? OriginalPrice { get; set; }
         public double? ActualPrice { get; set; }
         public string FullName { get; set; }
@@ -17,7 +17,7 @@ namespace ThucTap.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
         public Payment Payment { get; set; }
-        public User User { get; set; }
+        public Account Account { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
     }

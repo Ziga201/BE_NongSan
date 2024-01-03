@@ -50,11 +50,11 @@ namespace ThucTap.Services
         {
             if (dbContext.Product.Any(x => x.ProductID == request.ProductID))
                 return responseProductReviewObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy sản phẩm", null);
-            if (dbContext.User.Any(x => x.UserID == request.UserID))
+            if (dbContext.Account.Any(x => x.AccountID == request.AccountID))
                 return responseProductReviewObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy người dùng", null);
             ProductReview productReview = new ProductReview();
             productReview.ProductID = request.ProductID;
-            productReview.UserID = request.UserID;
+            productReview.AccountID = request.AccountID;
             productReview.ContentRated = request.ContentRated;
             productReview.PointEvaluation = request.PointEvaluation;
             productReview.ContentSeen = request.ContentSeen;
@@ -92,10 +92,11 @@ namespace ThucTap.Services
 
         public List<ProductReviewDTO> GetProductReview(int productID)
         {
-            var list = dbContext.ProductReview.Where(x => x.ProductID == productID).ToList();
+            var list = dbContext.ProductReview.Where(x => x.ProductID == productID);
             if (list == null)
                 return null;
-            return converter.EntityToListDTO(list);
+            var listDTO = list.Select(converter.EntityToDTO).ToList();
+            return listDTO;
         }
 
         public int NumberOfPurchases(int id)

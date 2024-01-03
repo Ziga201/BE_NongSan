@@ -20,13 +20,13 @@ namespace ThucTap.Services.Implement
         }
         public ResponseObject<CartItemDTO> AddToCart(AddToCartRequest request)
         {
-            var user = dbContext.User.FirstOrDefault(x => x.UserID == request.UserID);
-            if (user == null)
-                return responseObject.ResponseError(StatusCodes.Status404NotFound,"Người dùng không tồn tại", null);
-            var cart = dbContext.Cart.FirstOrDefault(x => x.UserID == request.UserID);
+            var account = dbContext.Account.FirstOrDefault(x => x.AccountID == request.AccountID);
+            if (account == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound,"Tài khoản không tồn tại", null);
+            var cart = dbContext.Cart.FirstOrDefault(x => x.AccountID == request.AccountID);
             if (cart == null)
             {
-                cart = new Cart() { UserID = request.UserID };
+                cart = new Cart() { AccountID = request.AccountID };
                 dbContext.Add(cart);
                 dbContext.SaveChanges();
             }
@@ -53,9 +53,9 @@ namespace ThucTap.Services.Implement
             return responseObject.ResponseSucess("Thêm giỏ vào hàng thành công !", converter.EntityToDTO(cartItem));
         }
 
-        public ResponseObject<Cart> DeleteCart(int userID)
+        public ResponseObject<Cart> DeleteCart(int accountID)
         {
-            var cart = dbContext.Cart.FirstOrDefault(x => x.UserID == userID);
+            var cart = dbContext.Cart.FirstOrDefault(x => x.AccountID == accountID);
             if (cart == null)
                 return responseObjectCart.ResponseError(StatusCodes.Status404NotFound, "Người dùng không tồn tại", null);
             dbContext.Remove(cart);
@@ -73,9 +73,9 @@ namespace ThucTap.Services.Implement
             return responseObject.ResponseSucess("Xóa CartItem thành công !", converter.EntityToDTO(cartItem));
         }
 
-        public List<CartItemDTO> GetAll(int userID)
+        public List<CartItemDTO> GetAll(int accountID)
         {
-            var cart = dbContext.Cart.FirstOrDefault(x => x.UserID == userID);
+            var cart = dbContext.Cart.FirstOrDefault(x => x.AccountID == accountID);
             if (cart == null)
                 return null;
             var cartItem = dbContext.CartItem.Where(x => x.CartID == cart.CartID);

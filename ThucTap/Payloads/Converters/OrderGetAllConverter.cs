@@ -20,7 +20,7 @@ namespace ThucTap.Payloads.Converters
             {
                 OrderID = order.OrderID,
                 PaymentMethod = dbContext.Payment.FirstOrDefault(x => x.PaymentID == order.PaymentID).PaymentMethod,
-                UserName = dbContext.User.FirstOrDefault(x => x.UserID == order.UserID).UserName,
+                UserName = dbContext.Account.FirstOrDefault(x => x.AccountID == order.AccountID).UserName,
                 OriginalPrice = order.OriginalPrice,
                 ActualPrice = order.ActualPrice,
                 FullName = order.FullName,

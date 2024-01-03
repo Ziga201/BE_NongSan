@@ -34,20 +34,17 @@ namespace ThucTap.Services.Implement
         {
             if (!dbContext.Payment.Any(x => x.PaymentID == orderRequest.PaymentID))
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Phương thức thanh toán không tồn tại", null);
-            if (!dbContext.User.Any(x => x.UserID == orderRequest.UserID))
+            if (!dbContext.Account.Any(x => x.AccountID == orderRequest.AccountID))
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Người dùng không tồn tại", null);
             Order order = new Order();
             order.PaymentID = orderRequest.PaymentID;
-            order.UserID = orderRequest.UserID;
+            order.AccountID = orderRequest.AccountID;
 
             order.FullName = orderRequest.FullName;
             order.Email = orderRequest.Email;
             order.Phone = orderRequest.Phone;
             order.Address = orderRequest.Address;
-            if (orderRequest.PaymentID == 5)
-                order.OrderStatusID = 2;
-            else 
-                order.OrderStatusID = 1;
+            order.OrderStatusID = 1;
             order.CreatedAt = DateTime.Now;
             order.UpdateAt = DateTime.Now;
             dbContext.Add(order);
@@ -75,16 +72,16 @@ namespace ThucTap.Services.Implement
             });
 
 
-                SendMail.Send(new MailContent
-                {
-                    MailTo = order.Email,
-                    Subject = $"DongAnh Shop đã nhận đơn hàng #{order.OrderID}",
-                    Content = $"<body style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;\">\r\n\r\n    <div style=\"max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">\r\n        <h1 style=\"color: #333333;\">Đặt Hàng Thành Công!</h1>\r\n        <p style=\"color: #555555;\">Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được xác nhận và đang được xử lý.</p>\r\n        <p style=\"color: #555555;\">Thông tin đơn hàng:</p>\r\n        <ul>\r\n            <li><strong>Sản phẩm:</strong> {listName}</li>\r\n            <li><strong>Trạng thái:</strong>{dbContext.OrderStatus.FirstOrDefault(x => x.OrderStatusID == order.OrderStatusID).OrderName} </li>\r\n            <li><strong>Tổng cộng:</strong> {totalAmount} VND</li>\r\n        </ul>\r\n        <p style=\"color: #555555;\">Cảm ơn bạn đã tin tưởng và mua sắm tại cửa hàng chúng tôi.</p>\r\n        <p style=\"color: #555555;\">Chúng tôi sẽ thông báo cho bạn khi đơn hàng của bạn được gửi đi.</p>\r\n        <p style=\"color: #555555;\">Xin vui lòng liên hệ chúng tôi nếu bạn có bất kỳ câu hỏi hoặc yêu cầu thêm thông tin.</p>\r\n        <p style=\"text-align: center; margin-top: 20px;\">\r\n            <a href=\"#\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; text-align: center; text-decoration: none; color: #ffffff; background-color: #3498db; border-radius: 3px;\">Xem Đơn Hàng</a>\r\n        </p>\r\n    </div>\r\n\r\n</body>"
-                });
-            if (orderRequest.PaymentID == 5)
+            SendMail.Send(new MailContent
+            {
+                MailTo = order.Email,
+                Subject = $"DongAnh Shop đã nhận đơn hàng #{order.OrderID}",
+                Content = $"<body style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;\">\r\n\r\n    <div style=\"max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">\r\n        <h1 style=\"color: #333333;\">Đặt Hàng Thành Công!</h1>\r\n        <p style=\"color: #555555;\">Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được xác nhận và đang được xử lý.</p>\r\n        <p style=\"color: #555555;\">Thông tin đơn hàng:</p>\r\n        <ul>\r\n            <li><strong>Sản phẩm:</strong> {listName}</li>\r\n            <li><strong>Phương thức thanh toán: </strong>{dbContext.Payment.FirstOrDefault(x => x.PaymentID == order.PaymentID).PaymentMethod} </li>\r\n            <li><strong>Tổng cộng:</strong> {totalAmount} VND</li>\r\n        </ul>\r\n        <p style=\"color: #555555;\">Cảm ơn bạn đã tin tưởng và mua sắm tại cửa hàng chúng tôi.</p>\r\n        <p style=\"color: #555555;\">Chúng tôi sẽ thông báo cho bạn khi đơn hàng của bạn được gửi đi.</p>\r\n        <p style=\"color: #555555;\">Xin vui lòng liên hệ chúng tôi nếu bạn có bất kỳ câu hỏi hoặc yêu cầu thêm thông tin.</p>\r\n        <p style=\"text-align: center; margin-top: 20px;\">\r\n            <a href=\"#\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; text-align: center; text-decoration: none; color: #ffffff; background-color: #3498db; border-radius: 3px;\">Xem Đơn Hàng</a>\r\n        </p>\r\n    </div>\r\n\r\n</body>"
+            });
+            if (orderRequest.PaymentID == 2)
             {
                 string url = GetPayment(totalAmount, order.OrderID);
-                
+
                 return responseObject.ResponseSucess(url, converter.EntityToDTO(order));
 
             }
@@ -155,7 +152,8 @@ namespace ThucTap.Services.Implement
             var order = dbContext.Order.FirstOrDefault(x => x.OrderID == id);
             if (order == null)
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy đơn hàng", null);
-            order.OrderStatusID = 3;
+            order.OrderStatusID = 2;
+
             dbContext.Update(order);
             dbContext.SaveChanges();
             return responseObject.ResponseSucess("Chuyển trạng thái đơn hàng thành công", converter.EntityToDTO(order));
@@ -164,7 +162,7 @@ namespace ThucTap.Services.Implement
         private string GetPayment(double totalAmount, int orderID)
         {
             //Get Config Info
-            string vnp_Returnurl = "http://localhost:3000/confirm";
+            string vnp_Returnurl = $"http://localhost:3000/confirm/";
             string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; //URL thanh toan cua VNPAY 
             string vnp_TmnCode = "ADKF5BBF"; //Ma website
             string vnp_HashSecret = "BSTZNVIFXKNXZXBSJTNLHJIOJRJGDQMY"; //Chuoi bi mat
@@ -215,9 +213,9 @@ namespace ThucTap.Services.Implement
             return listOrderDetailDTO;
         }
 
-        public List<OrderGetAllDTO> GetAllOrderByID(int userID)
+        public List<OrderGetAllDTO> GetAllOrderByID(int accountID)
         {
-            var listOrder = dbContext.Order.Where(x => x.UserID == userID);
+            var listOrder = dbContext.Order.Where(x => x.AccountID == accountID);
             var listOrderGetAllDTO = listOrder.Select(orderGetAllConverter.EntityToDTO).ToList();
             return listOrderGetAllDTO;
         }
@@ -226,12 +224,13 @@ namespace ThucTap.Services.Implement
         {
             var order = dbContext.Order.FirstOrDefault(x => x.OrderID == id);
             if (order == null)
-                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Order không tồn tại",null);
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Order không tồn tại", null);
 
             dbContext.Remove(order);
             dbContext.SaveChanges();
-            return responseObject.ResponseSucess("Hủy đơn hàng thành công",converter.EntityToDTO(order));
+            return responseObject.ResponseSucess("Hủy đơn hàng thành công", converter.EntityToDTO(order));
 
         }
+
     }
 }

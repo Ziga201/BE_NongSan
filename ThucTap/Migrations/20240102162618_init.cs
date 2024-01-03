@@ -62,7 +62,6 @@ namespace ThucTap.Migrations
                     ProductTypeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NameProductType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageTypeProduct = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -78,13 +77,16 @@ namespace ThucTap.Migrations
                     AccountID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DecentralizationID = table.Column<int>(type: "int", nullable: false),
                     ResetPasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ResetPasswordTokenExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -108,11 +110,11 @@ namespace ThucTap.Migrations
                     ProductTypeID = table.Column<int>(type: "int", nullable: false),
                     NameProduct = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<float>(type: "real", nullable: false),
-                    AvartarImageProduct = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Discount = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NumberOfViews = table.Column<int>(type: "int", nullable: false),
+                    AvatarImageProduct = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Discount = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NumberOfViews = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -124,6 +126,25 @@ namespace ThucTap.Migrations
                         column: x => x.ProductTypeID,
                         principalTable: "ProductType",
                         principalColumn: "ProductTypeID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cart",
+                columns: table => new
+                {
+                    CartID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccountID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cart", x => x.CartID);
+                    table.ForeignKey(
+                        name: "FK_Cart_Account_AccountID",
+                        column: x => x.AccountID,
+                        principalTable: "Account",
+                        principalColumn: "AccountID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -150,26 +171,43 @@ namespace ThucTap.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Order",
                 columns: table => new
                 {
-                    UserID = table.Column<int>(type: "int", nullable: false)
+                    OrderID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentID = table.Column<int>(type: "int", nullable: false),
+                    AccountID = table.Column<int>(type: "int", nullable: false),
+                    OriginalPrice = table.Column<double>(type: "float", nullable: true),
+                    ActualPrice = table.Column<double>(type: "float", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AccountID = table.Column<int>(type: "int", nullable: false),
+                    OrderStatusID = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.UserID);
+                    table.PrimaryKey("PK_Order", x => x.OrderID);
                     table.ForeignKey(
-                        name: "FK_User_Account_AccountID",
+                        name: "FK_Order_Account_AccountID",
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "AccountID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_OrderStatus_OrderStatusID",
+                        column: x => x.OrderStatusID,
+                        principalTable: "OrderStatus",
+                        principalColumn: "OrderStatusID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_Payment_PaymentID",
+                        column: x => x.PaymentID,
+                        principalTable: "Payment",
+                        principalColumn: "PaymentID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -198,75 +236,13 @@ namespace ThucTap.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Carts",
-                columns: table => new
-                {
-                    CartID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserID = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Carts", x => x.CartID);
-                    table.ForeignKey(
-                        name: "FK_Carts_User_UserID",
-                        column: x => x.UserID,
-                        principalTable: "User",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Order",
-                columns: table => new
-                {
-                    OrderID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentID = table.Column<int>(type: "int", nullable: false),
-                    UserID = table.Column<int>(type: "int", nullable: false),
-                    OriginalPrice = table.Column<double>(type: "float", nullable: false),
-                    ActualPrice = table.Column<double>(type: "float", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrderStatusID = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Order", x => x.OrderID);
-                    table.ForeignKey(
-                        name: "FK_Order_OrderStatus_OrderStatusID",
-                        column: x => x.OrderStatusID,
-                        principalTable: "OrderStatus",
-                        principalColumn: "OrderStatusID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Order_Payment_PaymentID",
-                        column: x => x.PaymentID,
-                        principalTable: "Payment",
-                        principalColumn: "PaymentID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Order_User_UserID",
-                        column: x => x.UserID,
-                        principalTable: "User",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ProductReview",
                 columns: table => new
                 {
                     ProductReviewID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductID = table.Column<int>(type: "int", nullable: false),
-                    UserID = table.Column<int>(type: "int", nullable: false),
+                    AccountID = table.Column<int>(type: "int", nullable: false),
                     ContentRated = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PointEvaluation = table.Column<int>(type: "int", nullable: false),
                     ContentSeen = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -278,16 +254,16 @@ namespace ThucTap.Migrations
                 {
                     table.PrimaryKey("PK_ProductReview", x => x.ProductReviewID);
                     table.ForeignKey(
+                        name: "FK_ProductReview_Account_AccountID",
+                        column: x => x.AccountID,
+                        principalTable: "Account",
+                        principalColumn: "AccountID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_ProductReview_Product_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Product",
                         principalColumn: "ProductID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductReview_User_UserID",
-                        column: x => x.UserID,
-                        principalTable: "User",
-                        principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -298,19 +274,23 @@ namespace ThucTap.Migrations
                     CartItemID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CartID = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CartsCartID = table.Column<int>(type: "int", nullable: false)
+                    ProductID = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CartItem", x => x.CartItemID);
                     table.ForeignKey(
-                        name: "FK_CartItem_Carts_CartsCartID",
-                        column: x => x.CartsCartID,
-                        principalTable: "Carts",
+                        name: "FK_CartItem_Cart_CartID",
+                        column: x => x.CartID,
+                        principalTable: "Cart",
                         principalColumn: "CartID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartItem_Product_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Product",
+                        principalColumn: "ProductID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -350,18 +330,28 @@ namespace ThucTap.Migrations
                 column: "DecentralizationID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItem_CartsCartID",
-                table: "CartItem",
-                column: "CartsCartID");
+                name: "IX_Cart_AccountID",
+                table: "Cart",
+                column: "AccountID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Carts_UserID",
-                table: "Carts",
-                column: "UserID");
+                name: "IX_CartItem_CartID",
+                table: "CartItem",
+                column: "CartID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartItem_ProductID",
+                table: "CartItem",
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConfirmEmail_AccountID",
                 table: "ConfirmEmail",
+                column: "AccountID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_AccountID",
+                table: "Order",
                 column: "AccountID");
 
             migrationBuilder.CreateIndex(
@@ -373,11 +363,6 @@ namespace ThucTap.Migrations
                 name: "IX_Order_PaymentID",
                 table: "Order",
                 column: "PaymentID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Order_UserID",
-                table: "Order",
-                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetail_OrderID",
@@ -400,19 +385,14 @@ namespace ThucTap.Migrations
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductReview_AccountID",
+                table: "ProductReview",
+                column: "AccountID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductReview_ProductID",
                 table: "ProductReview",
                 column: "ProductID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductReview_UserID",
-                table: "ProductReview",
-                column: "UserID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_User_AccountID",
-                table: "User",
-                column: "AccountID");
         }
 
         /// <inheritdoc />
@@ -434,7 +414,7 @@ namespace ThucTap.Migrations
                 name: "ProductReview");
 
             migrationBuilder.DropTable(
-                name: "Carts");
+                name: "Cart");
 
             migrationBuilder.DropTable(
                 name: "Order");
@@ -443,19 +423,16 @@ namespace ThucTap.Migrations
                 name: "Product");
 
             migrationBuilder.DropTable(
+                name: "Account");
+
+            migrationBuilder.DropTable(
                 name: "OrderStatus");
 
             migrationBuilder.DropTable(
                 name: "Payment");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
                 name: "ProductType");
-
-            migrationBuilder.DropTable(
-                name: "Account");
 
             migrationBuilder.DropTable(
                 name: "Decentralization");

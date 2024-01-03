@@ -22,10 +22,10 @@ namespace ThucTap.Controllers
         {
             return Ok(service.AddToCart(request));  
         }
-        [HttpGet("GetAll")]
-        public IActionResult GetAll(int userID)
+        [HttpGet("GetAll/{accountID}")]
+        public IActionResult GetAll(int accountID)
         {
-            return Ok(service.GetAll(userID));  
+            return Ok(service.GetAll(accountID));  
         }
         [HttpDelete("DeleteCart/{id}")]
         public IActionResult DeleteCart(int id)

@@ -6,8 +6,8 @@ namespace ThucTap.Entities
     {
         [Key]
         public int CartID { get; set; }
-        public int UserID { get; set; }
-        public User User { get; set; }
+        public int AccountID { get; set; }
+        public Account Account { get; set; }
         public List<CartItem> CartItems { get; set; }
     }
 }

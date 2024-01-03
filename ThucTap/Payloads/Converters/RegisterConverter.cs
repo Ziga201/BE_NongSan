@@ -14,10 +14,14 @@ namespace ThucTap.Payloads.Converters
                 AccountID = account.AccountID,
                 UserName = account.UserName,
                 Password = account.Password,
-                Avatar = account.Avatar,
                 Email = account.Email,
                 Status = account.Status,
                 AuthorityName = dbContext.Decentralization.FirstOrDefault(x => x.DecentralizationID == account.DecentralizationID).AuthorityName,
+                DecentralizationID = account.DecentralizationID,
+                Avatar = account.Avatar,
+                FullName = account.FullName,
+                Phone = account.Phone,
+                Address = account.Address,
                 CreatedAt = DateTime.UtcNow,
             };
         }
