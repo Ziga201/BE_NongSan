@@ -140,10 +140,10 @@ namespace ThucTap.Services.Implement
             return total;
         }
 
-        public List<OrderDTO> GetAll()
+        public List<OrderGetAllDTO> GetAll()
         {
             var listOrder = dbContext.Order.ToList();
-            var listOrderDTO = listOrder.Select(converter.EntityToDTO).ToList();
+            var listOrderDTO = listOrder.Select(orderGetAllConverter.EntityToDTO).ToList();
             return listOrderDTO;
         }
 

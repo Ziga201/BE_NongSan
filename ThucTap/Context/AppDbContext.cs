@@ -18,6 +18,8 @@ namespace ThucTap.Context
         public virtual DbSet<ProductImage> ProductImage { get; set; }
         public virtual DbSet<ProductReview> ProductReview { get; set; }
         public virtual DbSet<ProductType> ProductType { get; set; }
+        public virtual DbSet<Blog> Blog { get; set; }
+        public virtual DbSet<BlogType> BlogType { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer($"Server = ZIGA\\SQLEXPRESS; Database = QLBanNongSan; Trusted_Connection = True; " +

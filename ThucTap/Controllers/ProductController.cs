@@ -22,6 +22,11 @@ namespace ThucTap.Controllers
         {
             return Ok(_service.GetProduct(pagination));
         }
+        [HttpGet("GetProductByID/{id}")]
+        public IActionResult GetProductByID(int id)
+        {
+            return Ok(_service.GetProductByID(id));
+        }
         [HttpGet("GetOutstandingProduct")]
         public IActionResult GetOutstandingProduct(int productTypeID)
         {

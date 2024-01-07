@@ -15,17 +15,19 @@ namespace ThucTap.Services
     public class ProductService : BaseService, IProductService
     {
         private readonly ProductReviewConverter converter;
-        private readonly ResponseObject<Product> responseObject;
+        private readonly ProductConverter converterProduct;
+        private readonly ResponseObject<ProductDTO> responseObject;
         private readonly ResponseObject<ProductReviewDTO> responseProductReviewObject;
 
         public ProductService()
         {
             converter = new ProductReviewConverter();
-            responseObject = new ResponseObject<Product>();
+            converterProduct = new ProductConverter();
+            responseObject = new ResponseObject<ProductDTO>();
             responseProductReviewObject = new ResponseObject<ProductReviewDTO>();
         }
 
-        public async Task<ResponseObject<Product>> AddProduct(AddProductRequest request)
+        public async Task<ResponseObject<ProductDTO>> AddProduct(AddProductRequest request)
         {
             if (!dbContext.ProductType.Any(x => x.ProductTypeID == request.ProductTypeID))
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Loại sản phẩm không tồn tại", null);
@@ -38,12 +40,12 @@ namespace ThucTap.Services
             product.AvatarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             product.Title = request.Title;
             product.Discount = request.Discount;
-            product.Status = nameof(Enum.Status.ACTIVE);
+            product.Status = request.Status;
             product.CreatedAt = DateTime.Now;
             product.UpdateAt = DateTime.Now;
             dbContext.Add(product);
             dbContext.SaveChanges();
-            return responseObject.ResponseSucess("Thêm sản phẩm thành công", product);
+            return responseObject.ResponseSucess("Thêm sản phẩm thành công", converterProduct.EntityToDTO(product));
         }
 
         public ResponseObject<ProductReviewDTO> AddProductReview(AddProductReviewRequest request)
@@ -66,28 +68,36 @@ namespace ThucTap.Services
             return responseProductReviewObject.ResponseSucess("Thêm đánh giá thành công", converter.EntityToDTO(productReview));
         }
 
-        public ResponseObject<Product> DeleteProduct(int id)
+        public ResponseObject<ProductDTO> DeleteProduct(int id)
         {
             var product = dbContext.Product.FirstOrDefault(x => x.ProductID == id);
             if (product == null)
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Sản phẩm không tồn tại", null);
-            
+
             dbContext.Remove(product);
             dbContext.SaveChanges();
-            return responseObject.ResponseSucess("Xoá sản phẩm thành công", product);
+            return responseObject.ResponseSucess("Xoá sản phẩm thành công", converterProduct.EntityToDTO(product));
         }
 
-        public List<Product> GetOutstandingProduct(int productTypeID)
+        public List<ProductDTO> GetOutstandingProduct(int productTypeID)
         {
-            return dbContext.Product.Where(x => x.ProductTypeID == productTypeID).OrderByDescending(x => x.NumberOfViews).ToList();
+            return dbContext.Product.Where(x => x.ProductTypeID == productTypeID).OrderByDescending(x => x.NumberOfViews).Select(converterProduct.EntityToDTO).ToList();
         }
 
-        public PageResult<Product> GetProduct(Pagination? pagination)
+        public PageResult<ProductDTO> GetProduct(Pagination? pagination)
         {
-            var listProduct = dbContext.Product.AsQueryable();
-            var result = PageResult<Product>.ToPageResult(pagination, listProduct);
+            var listProduct = dbContext.Product.Select(converterProduct.EntityToDTO);
+            var result = PageResult<ProductDTO>.ToPageResult(pagination, listProduct);
             pagination.TotalCount = listProduct.Count();
-            return new PageResult<Product>(pagination, result);
+            return new PageResult<ProductDTO>(pagination, result);
+        }
+
+        public ResponseObject<ProductDTO> GetProductByID(int id)
+        {
+            var product = dbContext.Product.FirstOrDefault(x => x.ProductID == id);
+            if (product == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Sản phẩm không tồn tại", null);
+            return responseObject.ResponseSucess("Hiện thị sản phẩm thành công", converterProduct.EntityToDTO(product));
         }
 
         public List<ProductReviewDTO> GetProductReview(int productID)
@@ -107,7 +117,7 @@ namespace ThucTap.Services
             return total;
         }
 
-        public async Task<ResponseObject<Product>> UpdateProduct(UpdateProductRequest request)
+        public async Task<ResponseObject<ProductDTO>> UpdateProduct(UpdateProductRequest request)
         {
             var product = dbContext.Product.FirstOrDefault(x => x.ProductID == request.ProductID);
             if (product == null)
@@ -127,16 +137,16 @@ namespace ThucTap.Services
             product.UpdateAt = DateTime.Now;
             dbContext.Update(product);
             dbContext.SaveChanges();
-            return responseObject.ResponseSucess("Sửa sản phẩm thành công", product);
+            return responseObject.ResponseSucess("Sửa sản phẩm thành công", converterProduct.EntityToDTO(product));
         }
 
-        public ResponseObject<Product> UpdateView(int id)
+        public ResponseObject<ProductDTO> UpdateView(int id)
         {
             var product = dbContext.Product.FirstOrDefault(x => x.ProductID == id);
             product.NumberOfViews += 1;
             dbContext.Update(product);
             dbContext.SaveChanges();
-            return responseObject.ResponseSucess("Cập nhật lượt xem thành công", product);
+            return responseObject.ResponseSucess("Cập nhật lượt xem thành công", converterProduct.EntityToDTO(product));
         }
     }
 }

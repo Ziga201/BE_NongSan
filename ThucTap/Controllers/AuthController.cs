@@ -38,6 +38,11 @@ namespace ThucTap.Controllers
         {
             return Ok(_service.GetAll());
         }
+        [HttpGet("GetAllStaff")]
+        public IActionResult GetAllStaff()
+        {
+            return Ok(_service.GetAllStaff());
+        }
         [HttpPost("ForgotPassword")]
         public IActionResult ForgotPassword(string mail)
         {

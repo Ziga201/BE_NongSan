@@ -334,5 +334,10 @@ namespace ThucTap.Services
             dbContext.SaveChanges();
             return responseObject.ResponseSucess("Thêm tài khoản thành công", converter.EntityToDTO(account));
         }
+
+        public IQueryable<RegisterDTO> GetAllStaff()
+        {
+            return dbContext.Account.Where(x => x.DecentralizationID == 3).Select(converter.EntityToDTO).AsQueryable();
+        }
     }
 }

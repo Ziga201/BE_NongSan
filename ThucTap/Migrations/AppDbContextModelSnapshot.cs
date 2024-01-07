@@ -80,6 +80,61 @@ namespace ThucTap.Migrations
                     b.ToTable("Account");
                 });
 
+            modelBuilder.Entity("ThucTap.Entities.Blog", b =>
+                {
+                    b.Property<int>("BlogID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BlogID"));
+
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BlogTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BlogID");
+
+                    b.HasIndex("AccountID");
+
+                    b.HasIndex("BlogTypeID");
+
+                    b.ToTable("Blog");
+                });
+
+            modelBuilder.Entity("ThucTap.Entities.BlogType", b =>
+                {
+                    b.Property<int>("BlogTypeID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BlogTypeID"));
+
+                    b.Property<string>("BlogTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BlogTypeID");
+
+                    b.ToTable("BlogType");
+                });
+
             modelBuilder.Entity("ThucTap.Entities.Cart", b =>
                 {
                     b.Property<int>("CartID")
@@ -467,6 +522,25 @@ namespace ThucTap.Migrations
                         .IsRequired();
 
                     b.Navigation("Decentralization");
+                });
+
+            modelBuilder.Entity("ThucTap.Entities.Blog", b =>
+                {
+                    b.HasOne("ThucTap.Entities.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ThucTap.Entities.BlogType", "BlogType")
+                        .WithMany()
+                        .HasForeignKey("BlogTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("BlogType");
                 });
 
             modelBuilder.Entity("ThucTap.Entities.Cart", b =>

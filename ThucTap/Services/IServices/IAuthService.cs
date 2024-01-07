@@ -21,6 +21,8 @@ namespace ThucTap.IServices
         Task<ResponseObject<RegisterDTO>> UpdateAccount(UpdateAccountRequest request);
         ResponseObject<RegisterDTO> DeleteAccount(int id);
         Account GetAccountByID(int id);
+        IQueryable<RegisterDTO> GetAllStaff();
+
 
     }
 }

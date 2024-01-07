@@ -2,12 +2,15 @@
 {
     public class ProductDTO
     {
+        public int ProductID { get; set; }
+        public int ProductTypeID { get; set; }
+        public string NameProductType { get; set; }
         public string NameProduct { get; set; }
         public float Price { get; set; }
-        public string AvartarImageProduct { get; set; }
-        public string Title { get; set; }
-        public int Discount { get; set; }
-        public int Status { get; set; }
-        public int NumberOfViews { get; set; }
+        public string? AvatarImageProduct { get; set; }
+        public string? Title { get; set; }
+        public int? Discount { get; set; }
+        public string? Status { get; set; }
+        public int? NumberOfViews { get; set; }
     }
 }

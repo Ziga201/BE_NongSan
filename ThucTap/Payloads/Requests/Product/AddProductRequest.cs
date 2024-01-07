@@ -7,6 +7,7 @@
         public float Price { get; set; }
         public IFormFile? AvatarImageProduct { get; set; }
         public string Title { get; set; }
+        public string? Status { get; set; }
         public int? Discount { get; set; }
     }
 }
