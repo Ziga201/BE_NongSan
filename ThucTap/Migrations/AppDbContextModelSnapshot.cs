@@ -102,7 +102,6 @@ namespace ThucTap.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -227,6 +226,40 @@ namespace ThucTap.Migrations
                     b.HasKey("DecentralizationID");
 
                     b.ToTable("Decentralization");
+                });
+
+            modelBuilder.Entity("ThucTap.Entities.Message", b =>
+                {
+                    b.Property<int>("MessageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageID"));
+
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MessageID");
+
+                    b.HasIndex("AccountID");
+
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("ThucTap.Entities.Order", b =>
@@ -574,6 +607,17 @@ namespace ThucTap.Migrations
                 });
 
             modelBuilder.Entity("ThucTap.Entities.ConfirmEmail", b =>
+                {
+                    b.HasOne("ThucTap.Entities.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("ThucTap.Entities.Message", b =>
                 {
                     b.HasOne("ThucTap.Entities.Account", "Account")
                         .WithMany()

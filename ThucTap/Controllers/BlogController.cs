@@ -37,6 +37,11 @@ namespace ThucTap.Controllers
         {
             return Ok(_service.GetAll());
         }
+        [HttpGet("GetAllByBlogTypeID/{id}")]
+        public IActionResult GetAllByBlogTypeID(int id)
+        {
+            return Ok(_service.GetAllByBlogTypeID(id));
+        }
         [HttpGet("GetBlogByID/{id}")]
         public IActionResult GetBlogByID(int id)
         {

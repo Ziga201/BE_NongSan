@@ -114,37 +114,43 @@ namespace ThucTap.Services
             dbContext.SaveChanges();
 
 
+            HandleSendCode(account.AccountID, account.Email);
+            return responseObject.ResponseSucess("Đăng ký tài khoản thành công, vui lòng kiểm tra email để nhận mã xác thực tài khoản",
+                converter.EntityToDTO(account));
+
+        }
+
+        private void HandleSendCode(int accountID, string email)
+        {
             //Send code
-            var confirm = dbContext.ConfirmEmail.FirstOrDefault(x => x.AccountID == account.AccountID);
+            var confirm = dbContext.ConfirmEmail.FirstOrDefault(x => x.AccountID == accountID);
             if (confirm != null)
             {
                 dbContext.Remove(confirm);
                 dbContext.SaveChanges();
             }
             ConfirmEmail confirmEmail = new ConfirmEmail();
-            confirmEmail.AccountID = account.AccountID;
+            confirmEmail.AccountID = accountID;
             confirmEmail.CodeActive = new Random().Next(100000, 999999);
-            confirmEmail.ExpriedTime = DateTime.Now.AddHours(1);
+            confirmEmail.ExpriedTime = DateTime.Now.AddMinutes(2);
             confirmEmail.IsConfirmed = false;
             dbContext.Add(confirmEmail);
             dbContext.SaveChanges();
 
             SendMail.Send(new MailContent
             {
-                MailTo = account.Email,
+                MailTo = email,
                 Subject = "Mã xác thực tài khoản",
                 Content = $"<table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" style=\"max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 5px;\">\r\n        <tr>\r\n            <td align=\"\">\r\n                <h2 style=\"color: #3498db;\">Công ty Đông Anh Group!</h2>\r\n                <p>Cảm ơn bạn đã đăng ký. Đây là mã kích hoạt tài khoản của bạn:</p>\r\n                <p style=\"font-size: 24px; font-weight: bold; color: #3498db;\">[{confirmEmail.CodeActive}]</p>\r\n                <p>Nếu bạn không thực hiện đăng ký, xin vui lòng bỏ qua email này.</p>\r\n                <p>Trân trọng,</p>\r\n                <p style=\"color: #333; font-weight: bold;\">[Web bán hàng]</p>\r\n            </td>\r\n        </tr>\r\n    </table>"
             });
-            return responseObject.ResponseSucess("Đăng ký tài khoản thành công, vui lòng kiểm tra email để nhận mã xác thực tài khoản", 
-                converter.EntityToDTO(account));
-
         }
+
 
         public ResponseObject<TokenDTO> RenewAccessToken(RenewAccessTokenRequest request)
         {
             var account = dbContext.Account.FirstOrDefault(x => x.ResetPasswordToken == request.RefeshToken);
             if (account == null)
-                return responseTokenObject.ResponseError(StatusCodes.Status404NotFound, "Refresh Token không tồn tại",null);
+                return responseTokenObject.ResponseError(StatusCodes.Status404NotFound, "Refresh Token không tồn tại", null);
             if (account.ResetPasswordTokenExpiry < DateTime.Now)
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Refresh Token chưa hết hạn", null);
             return responseTokenObject.ResponseSucess("Tạo mới Token thành công", GenerateAccessToken(account));
@@ -160,7 +166,7 @@ namespace ThucTap.Services
             bool checkPass = BCryptNet.Verify(request.Password, account.Password);
             if (!checkPass)
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản hoặc mật khẩu không chính xác", null);
-            if(account.Status == nameof(Enum.Status.INACTIVE))
+            if (account.Status == nameof(Enum.Status.INACTIVE))
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "tài khoản chưa được kích hoạt", null);
 
             return responseTokenObject.ResponseSucess("Đăng nhập thành công", GenerateAccessToken(account));
@@ -172,9 +178,9 @@ namespace ThucTap.Services
             return result;
         }
 
-        public ResponseObject<MailDTO> ForgotPassword(string mail)
+        public ResponseObject<MailDTO> SendCode(string email)
         {
-            var account = dbContext.Account.FirstOrDefault(x => x.Email == mail);
+            var account = dbContext.Account.FirstOrDefault(x => x.Email == email);
 
             if (account == null)
             {
@@ -186,64 +192,24 @@ namespace ThucTap.Services
                 dbContext.Remove(confirm);
                 dbContext.SaveChanges();
             }
-            ConfirmEmail confirmEmail = new ConfirmEmail();
-            confirmEmail.AccountID = account.AccountID;
-            confirmEmail.CodeActive = new Random().Next(100000, 999999);
-            confirmEmail.ExpriedTime = DateTime.Now.AddMinutes(5);
-            confirmEmail.IsConfirmed = false;
-            dbContext.Add(confirmEmail);
-            dbContext.SaveChanges();
-
-            SendMail.Send(new MailContent
-            {
-                MailTo = account.Email,
-                Subject = "Mã xác thực tạo mới mật khẩu",
-                //Content = $"Mã xác thực là <h1>{confirmEmail.CodeActive}</h1>"
-                Content = $"<table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" style=\"max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 5px;\">\r\n        <tr>\r\n            <td align=\"\">\r\n                <h2 style=\"color: #3498db;\">Công ty Đông Anh Group!</h2>\r\n                <p>Cảm ơn bạn đã đăng ký. Đây là mã kích hoạt tài khoản của bạn:</p>\r\n                <p style=\"font-size: 24px; font-weight: bold; color: #3498db;\">[{confirmEmail.CodeActive}]</p>\r\n                <p>Nếu bạn không thực hiện đăng ký, xin vui lòng bỏ qua email này.</p>\r\n                <p>Trân trọng,</p>\r\n                <p style=\"color: #333; font-weight: bold;\">[Web bán hàng]</p>\r\n            </td>\r\n        </tr>\r\n    </table>"
-            });
+            HandleSendCode(account.AccountID, account.Email);
 
 
 
-            return responseMailObject.ResponseSucess("Đã gửi mã xác thực, mã có hiệu lực trong 5 phút! Vui lòng kiểm tra Mail", null);
+            return responseMailObject.ResponseSucess("Đã gửi mã xác thực, mã có hiệu lực trong 2 phút! Vui lòng kiểm tra Mail", null);
         }
 
-        public string CreateNewPassword(CreateNewPasswordRequest request)
+        public ResponseObject<RegisterDTO> ActiveAccount(ActiveAccountRequest request)
         {
-            var confirm = dbContext.ConfirmEmail.FirstOrDefault(x => x.AccountID == request.AccountID
-                            && x.CodeActive == request.CodeActive);
-            if (confirm == null)
-                return "Mã xác thực không đúng!";
-            if (confirm.ExpriedTime < DateTime.Now)
-                return "Mã xác thực hết hạn sử dụng";
-            if (!ValidatePassword.isValidPassword(request.NewPassword))
-                return "Mật khẩu bao gồm chữ, số và ký tự đặc biệt";
-
-
-            confirm.IsConfirmed = true;
-            dbContext.Update(confirm);
-            dbContext.SaveChanges();
-
-            var account = dbContext.Account.FirstOrDefault(x => x.AccountID == request.AccountID);
-            account.Password = BCryptNet.HashPassword(request.NewPassword);
-            dbContext.Update(account);
-            dbContext.SaveChanges();
-
-            return "Tạo mới mật khẩu thành công";
-        }
-
-        public string ActiveAccount(ActiveAccountRequest request)
-        {
-            var account = dbContext.Account.FirstOrDefault(x => x.AccountID.Equals(request.AccountID));
+            var account = dbContext.Account.FirstOrDefault(x => x.Email == request.Email);
             if (account == null)
-            {
-                return "Tài khoản không tồn tại";
-            }
-            var confirm = dbContext.ConfirmEmail.FirstOrDefault(x => x.AccountID == request.AccountID
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Email không tồn tại", null);
+            var confirm = dbContext.ConfirmEmail.FirstOrDefault(x => x.AccountID == account.AccountID
                             && x.CodeActive == request.CodeActive);
             if (confirm == null)
-                return "Mã xác thực không đúng!";
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác thực không đúng!", null);
             if (confirm.ExpriedTime < DateTime.Now)
-                return "Mã xác thực hết hạn sử dụng";
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác thực hết hạn sử dụng", null);
             confirm.IsConfirmed = true;
             dbContext.Update(confirm);
             dbContext.SaveChanges();
@@ -251,7 +217,7 @@ namespace ThucTap.Services
             account.Status = nameof(Enum.Status.ACTIVE);
             dbContext.Update(account);
             dbContext.SaveChanges();
-            return "Kích hoạt tài khoản thành công !";
+            return responseObject.ResponseSucess("Xác thực tài khoản thành công, mời bạn đăng nhập", null);
         }
 
         public async Task<ResponseObject<RegisterDTO>> UpdateAccount(UpdateAccountRequest request)
@@ -338,6 +304,29 @@ namespace ThucTap.Services
         public IQueryable<RegisterDTO> GetAllStaff()
         {
             return dbContext.Account.Where(x => x.DecentralizationID == 3).Select(converter.EntityToDTO).AsQueryable();
+        }
+
+        public ResponseObject<RegisterDTO> ForgotPassword(ForgotPasswordRequest request)
+        {
+            var account = dbContext.Account.FirstOrDefault(x => x.Email == request.Email);
+            if (account == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Email không tồn tại", null);
+            var confirm = dbContext.ConfirmEmail.FirstOrDefault(x => x.AccountID == account.AccountID
+                            && x.CodeActive == request.CodeActive);
+            if (confirm == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác thực không đúng!", null);
+            if (confirm.ExpriedTime < DateTime.Now)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác thực hết hạn sử dụng", null);
+            if (!ValidatePassword.isValidPassword(request.NewPassword))
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Mật khẩu bao gồm chữ, số và ký tự đặc biệt", null);
+            confirm.IsConfirmed = true;
+            dbContext.Update(confirm);
+            dbContext.SaveChanges();
+
+            account.Password = BCryptNet.HashPassword(request.NewPassword);
+            dbContext.Update(account);
+            dbContext.SaveChanges();
+            return responseObject.ResponseSucess("Cập nhật mật khẩu mới thành công, mời bạn đăng nhập", converter.EntityToDTO(account));
         }
     }
 }

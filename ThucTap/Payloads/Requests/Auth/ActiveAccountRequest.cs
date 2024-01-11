@@ -2,7 +2,7 @@
 {
     public class ActiveAccountRequest
     {
-        public int AccountID { get; set; }
+        public string Email { get; set; }
         public int CodeActive { get; set; }
     }
 }

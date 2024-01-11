@@ -56,6 +56,14 @@ namespace ThucTap.Services.Implement
             return dbContext.Blog.Select(converter.EntityToDTO).ToList();
         }
 
+        public List<BlogDTO> GetAllByBlogTypeID(int id)
+        {
+            var blog =  dbContext.Blog.Where(x => x.BlogTypeID == id).Select(converter.EntityToDTO).ToList();
+            if(blog == null)
+                return null;
+            return blog;
+        }
+
         public ResponseObject<BlogDTO> GetBlogByID(int id)
         {
             var blog =  dbContext.Blog.FirstOrDefault(x => x.BlogID == id);

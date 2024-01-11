@@ -14,9 +14,9 @@ namespace ThucTap.IServices
         ResponseObject<TokenDTO> RenewAccessToken(RenewAccessTokenRequest request);
         ResponseObject<TokenDTO> Login(LoginRequest request);
         IQueryable<RegisterDTO> GetAll();
-        ResponseObject<MailDTO> ForgotPassword(string mail);
-        string CreateNewPassword(CreateNewPasswordRequest request);
-        string ActiveAccount(ActiveAccountRequest request);
+        ResponseObject<MailDTO> SendCode(string email);
+        ResponseObject<RegisterDTO> ActiveAccount(ActiveAccountRequest request);
+        ResponseObject<RegisterDTO> ForgotPassword(ForgotPasswordRequest request);
         Task<ResponseObject<RegisterDTO>> AddAccount(AddAccountRequest request);
         Task<ResponseObject<RegisterDTO>> UpdateAccount(UpdateAccountRequest request);
         ResponseObject<RegisterDTO> DeleteAccount(int id);

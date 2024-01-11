@@ -43,18 +43,13 @@ namespace ThucTap.Controllers
         {
             return Ok(_service.GetAllStaff());
         }
-        [HttpPost("ForgotPassword")]
-        public IActionResult ForgotPassword(string mail)
+        [HttpPost("SendCode")]
+        public IActionResult SendCode([FromForm] string email)
         {
-            return Ok(_service.ForgotPassword(mail));
-        }
-        [HttpPut("CreateNewPassword")]
-        public IActionResult CreateNewPassword(CreateNewPasswordRequest request)
-        {
-            return Ok(_service.CreateNewPassword(request));
+            return Ok(_service.SendCode(email));
         }
         [HttpPut("ActiveAccount")]
-        public IActionResult ActiveAccount(ActiveAccountRequest request)
+        public IActionResult ActiveAccount([FromForm] ActiveAccountRequest request)
         {
             return Ok(_service.ActiveAccount(request));
         }
@@ -77,6 +72,11 @@ namespace ThucTap.Controllers
         public IActionResult GetAccountByID(int id)
         {
             return Ok(_service.GetAccountByID(id));
+        }
+        [HttpPut("ForgotPassword")]
+        public IActionResult ForgotPassword([FromForm] ForgotPasswordRequest request)
+        {
+            return Ok(_service.ForgotPassword(request));
         }
     }
 }

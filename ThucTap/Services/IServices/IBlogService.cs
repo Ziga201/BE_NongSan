@@ -10,6 +10,7 @@ namespace ThucTap.Services.IServices
         Task<ResponseObject<BlogDTO>> UpdateBlog(UpdateBlogRequest request);
         ResponseObject<BlogDTO> DeleteBlog(int id);
         List<BlogDTO> GetAll();
+        List<BlogDTO> GetAllByBlogTypeID(int id);
         ResponseObject<BlogDTO> GetBlogByID(int id);
     }
 }
