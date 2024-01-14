@@ -16,10 +16,10 @@ namespace ThucTap.Payloads.Converters
                 NameProduct = product.NameProduct,
                 Price = product.Price,
                 AvatarImageProduct = product.AvatarImageProduct,
-                Title = product.Title,
+                Describe = product.Describe,
                 Discount = product.Discount,
                 Status = product.Status,
-                NumberOfViews = product.NumberOfViews,
+                Quantity = product.Quantity,
             };
         }
     }

@@ -12,6 +12,7 @@ namespace ThucTap.Payloads.DTOs
         public string FullName { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
+        public int OrderStatusID { get; set; }
         public string OrderName { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<OrderDetailDTO> OrderDetailDTOs { get; set; }

@@ -152,7 +152,13 @@ namespace ThucTap.Services.Implement
             var order = dbContext.Order.FirstOrDefault(x => x.OrderID == id);
             if (order == null)
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy đơn hàng", null);
+            if(order.OrderStatusID == 1)
             order.OrderStatusID = 2;
+            else if (order.OrderStatusID == 2)
+                order.OrderStatusID = 3;
+            else
+                order.OrderStatusID = 1;
+
 
             dbContext.Update(order);
             dbContext.SaveChanges();

@@ -11,6 +11,7 @@ namespace ThucTap.Payloads.Converters
         {
             return new OrderDetailDTO()
             {
+                ProductID = orderDetail.ProductID,
                 NameProduct = dbContext.Product.FirstOrDefault(x => x.ProductID == orderDetail.ProductID).NameProduct,
                 AvatarImageProduct = dbContext.Product.FirstOrDefault(x => x.ProductID == orderDetail.ProductID).AvatarImageProduct,
                 PriceTotal = orderDetail.PriceTotal,

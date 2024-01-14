@@ -27,15 +27,20 @@ namespace ThucTap.Controllers
         {
             return Ok(_service.GetProductByID(id));
         }
-        [HttpGet("GetOutstandingProduct")]
-        public IActionResult GetOutstandingProduct(int productTypeID)
+        [HttpGet("GetRelatedProduct")]
+        public IActionResult GetRelatedProduct(int productTypeID)
         {
-            return Ok(_service.GetOutstandingProduct(productTypeID));
+            return Ok(_service.GetRelatedProduct(productTypeID));
         }
         [HttpGet("GetProductReview")]
-        public IActionResult GetProductReview(int productTypeID)
+        public IActionResult GetProductReview(int productID)
         {
-            return Ok(_service.GetProductReview(productTypeID));
+            return Ok(_service.GetProductReview(productID));
+        }
+        [HttpGet("GetProductReviewByAccountID/{accountID}")]
+        public IActionResult GetProductReviewByAccountID(int accountID)
+        {
+            return Ok(_service.GetProductReviewByAccountID(accountID));
         }
 
         [HttpPost("AddProduct")]
@@ -55,15 +60,9 @@ namespace ThucTap.Controllers
             return Ok(_service.DeleteProduct(id));
         }
         [HttpPost("AddProductReview")]
-        public IActionResult AddProductReview(AddProductReviewRequest request)
+        public IActionResult AddProductReview([FromForm] AddProductReviewRequest request)
         {
             return Ok(_service.AddProductReview(request));
-
-        }
-        [HttpPut("UpdateView")]
-        public IActionResult UpdateView(int id)
-        {
-            return Ok(_service.UpdateView(id));
 
         }
         [HttpGet("NumberOfPurchases")]

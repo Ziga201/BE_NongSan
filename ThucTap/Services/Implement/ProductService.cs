@@ -4,6 +4,7 @@ using ThucTap.Entities;
 using ThucTap.Handle.Image;
 using ThucTap.Handle.Page;
 using ThucTap.IServices;
+using ThucTap.Migrations;
 using ThucTap.Payloads.Converters;
 using ThucTap.Payloads.DTOs;
 using ThucTap.Payloads.Requests.Product;
@@ -38,9 +39,10 @@ namespace ThucTap.Services
             product.NameProduct = request.NameProduct;
             product.Price = request.Price;
             product.AvatarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
-            product.Title = request.Title;
+            product.Describe = request.Describe;
             product.Discount = request.Discount;
             product.Status = request.Status;
+            product.Quantity = request.Quantity?? 0;
             product.CreatedAt = DateTime.Now;
             product.UpdateAt = DateTime.Now;
             dbContext.Add(product);
@@ -48,21 +50,21 @@ namespace ThucTap.Services
             return responseObject.ResponseSucess("Thêm sản phẩm thành công", converterProduct.EntityToDTO(product));
         }
 
-        public ResponseObject<ProductReviewDTO> AddProductReview(AddProductReviewRequest request)
+        public async Task<ResponseObject<ProductReviewDTO>> AddProductReview(AddProductReviewRequest request)
         {
-            if (dbContext.Product.Any(x => x.ProductID == request.ProductID))
+            if (!dbContext.Product.Any(x => x.ProductID == request.ProductID))
                 return responseProductReviewObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy sản phẩm", null);
-            if (dbContext.Account.Any(x => x.AccountID == request.AccountID))
+            if (!dbContext.Account.Any(x => x.AccountID == request.AccountID))
                 return responseProductReviewObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy người dùng", null);
+            var avatarFile = await UploadImage.Upfile(request.Image);
+
             ProductReview productReview = new ProductReview();
             productReview.ProductID = request.ProductID;
             productReview.AccountID = request.AccountID;
-            productReview.ContentRated = request.ContentRated;
             productReview.PointEvaluation = request.PointEvaluation;
-            productReview.ContentSeen = request.ContentSeen;
-            productReview.Status = nameof(Enum.Status.ACTIVE);
+            productReview.Content = request.Content;
+            productReview.Image = avatarFile;
             productReview.CreatedAt = DateTime.Now;
-            productReview.UpdateAt = DateTime.Now;
             dbContext.Add(productReview);
             dbContext.SaveChanges();
             return responseProductReviewObject.ResponseSucess("Thêm đánh giá thành công", converter.EntityToDTO(productReview));
@@ -79,9 +81,9 @@ namespace ThucTap.Services
             return responseObject.ResponseSucess("Xoá sản phẩm thành công", converterProduct.EntityToDTO(product));
         }
 
-        public List<ProductDTO> GetOutstandingProduct(int productTypeID)
+        public List<ProductDTO> GetRelatedProduct(int productTypeID)
         {
-            return dbContext.Product.Where(x => x.ProductTypeID == productTypeID).OrderByDescending(x => x.NumberOfViews).Select(converterProduct.EntityToDTO).ToList();
+            return dbContext.Product.Where(x => x.ProductTypeID == productTypeID).OrderBy(x => Guid.NewGuid()).Select(converterProduct.EntityToDTO).ToList();
         }
 
         public PageResult<ProductDTO> GetProduct(Pagination? pagination)
@@ -130,9 +132,10 @@ namespace ThucTap.Services
             product.NameProduct = request.NameProduct;
             product.Price = request.Price;
             product.AvatarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
-            product.Title = request.Title;
+            product.Describe = request.Describe;
             product.Discount = request.Discount;
             product.Status = request.Status;
+            product.Quantity = request.Quantity ?? 0;
             product.CreatedAt = DateTime.Now;
             product.UpdateAt = DateTime.Now;
             dbContext.Update(product);
@@ -140,13 +143,13 @@ namespace ThucTap.Services
             return responseObject.ResponseSucess("Sửa sản phẩm thành công", converterProduct.EntityToDTO(product));
         }
 
-        public ResponseObject<ProductDTO> UpdateView(int id)
+        public List<ProductReviewDTO> GetProductReviewByAccountID(int accountID)
         {
-            var product = dbContext.Product.FirstOrDefault(x => x.ProductID == id);
-            product.NumberOfViews += 1;
-            dbContext.Update(product);
-            dbContext.SaveChanges();
-            return responseObject.ResponseSucess("Cập nhật lượt xem thành công", converterProduct.EntityToDTO(product));
+            var list = dbContext.ProductReview.Where(x => x.AccountID == accountID);
+            if (list == null)
+                return null;
+            var listDTO = list.Select(converter.EntityToDTO).ToList();
+            return listDTO;
         }
     }
 }

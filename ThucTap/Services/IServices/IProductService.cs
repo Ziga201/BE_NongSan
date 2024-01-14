@@ -12,10 +12,10 @@ namespace ThucTap.IServices
         Task<ResponseObject<ProductDTO>> UpdateProduct(UpdateProductRequest request);
         ResponseObject<ProductDTO> DeleteProduct(int id);
         PageResult<ProductDTO> GetProduct(Pagination? pagination);
-        List<ProductDTO> GetOutstandingProduct(int productTypeID);
-        ResponseObject<ProductReviewDTO> AddProductReview(AddProductReviewRequest request);
+        List<ProductDTO> GetRelatedProduct(int productTypeID);
+        Task<ResponseObject<ProductReviewDTO>> AddProductReview(AddProductReviewRequest request);
         List<ProductReviewDTO> GetProductReview(int productID);
-        ResponseObject<ProductDTO> UpdateView(int id);
+        List<ProductReviewDTO> GetProductReviewByAccountID(int accountID);
         int NumberOfPurchases(int id);
         ResponseObject<ProductDTO> GetProductByID(int id);
 

@@ -8,9 +8,9 @@
         public string NameProduct { get; set; }
         public float Price { get; set; }
         public string? AvatarImageProduct { get; set; }
-        public string? Title { get; set; }
+        public string? Describe { get; set; }
         public int? Discount { get; set; }
         public string? Status { get; set; }
-        public int? NumberOfViews { get; set; }
+        public int? Quantity { get; set; }
     }
 }

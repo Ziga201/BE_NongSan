@@ -26,6 +26,7 @@ namespace ThucTap.Payloads.Converters
                 FullName = order.FullName,
                 Phone = order.Phone,
                 Address = order.Address,
+                OrderStatusID = order.OrderStatusID,
                 OrderName = dbContext.OrderStatus.FirstOrDefault(x => x.OrderStatusID == order.OrderStatusID).OrderName,
                 CreatedAt = order.CreatedAt,
                 OrderDetailDTOs = dbContext.OrderDetail.Where(x => x.OrderID == order.OrderID).Select(x => converter.EntityToDTO(x)).ToList(),

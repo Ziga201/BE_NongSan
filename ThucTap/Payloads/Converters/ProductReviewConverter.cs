@@ -1,4 +1,5 @@
-﻿using ThucTap.Entities;
+﻿using Microsoft.Identity.Client;
+using ThucTap.Entities;
 using ThucTap.Payloads.DTOs;
 using ThucTap.Services;
 
@@ -10,11 +11,13 @@ namespace ThucTap.Payloads.Converters
         {
             return new ProductReviewDTO()
             {
+                ProductID = productReview.ProductID,
                 NameProduct = dbContext.Product.FirstOrDefault(x => x.ProductID == productReview.ProductID).NameProduct,
                 UserName = dbContext.Account.FirstOrDefault(x => x.AccountID == productReview.AccountID).UserName,
-                ContentRated = productReview.ContentRated,
+                Avatar = dbContext.Account.FirstOrDefault(x => x.AccountID == productReview.AccountID).Avatar,
                 PointEvaluation = productReview.PointEvaluation,
-                ContentSeen = productReview.ContentSeen,
+                Content = productReview.Content,
+                Image = productReview.Image,
                 CreatedAt = productReview.CreatedAt,
             };
         }
