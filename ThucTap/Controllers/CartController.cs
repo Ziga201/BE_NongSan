@@ -22,6 +22,11 @@ namespace ThucTap.Controllers
         {
             return Ok(service.AddToCart(request));  
         }
+        [HttpPut("HandleQuantity")]
+        public IActionResult HandleQuantity([FromForm]HandleQuantityRequest request)
+        {
+            return Ok(service.HandleQuantity(request));  
+        }
         [HttpGet("GetAll/{accountID}")]
         public IActionResult GetAll(int accountID)
         {

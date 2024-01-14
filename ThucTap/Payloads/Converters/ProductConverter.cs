@@ -20,6 +20,7 @@ namespace ThucTap.Payloads.Converters
                 Discount = product.Discount,
                 Status = product.Status,
                 Quantity = product.Quantity,
+                Purchases = product.Purchases,
             };
         }
     }

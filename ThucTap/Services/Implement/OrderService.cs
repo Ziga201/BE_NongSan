@@ -36,6 +36,18 @@ namespace ThucTap.Services.Implement
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Phương thức thanh toán không tồn tại", null);
             if (!dbContext.Account.Any(x => x.AccountID == orderRequest.AccountID))
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Người dùng không tồn tại", null);
+
+            bool checkQuantity = true;
+
+            orderDetailRequests.ForEach(x =>
+            {
+                var quantity = dbContext.Product.FirstOrDefault(y => y.ProductID == x.ProductID).Quantity;
+                if (quantity < x.Quantity)
+                    checkQuantity = false;
+            });
+            if (!checkQuantity)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Số lượng sản phẩm trong kho đã thay đổi, vui lòng thử lại", null);
+
             Order order = new Order();
             order.PaymentID = orderRequest.PaymentID;
             order.AccountID = orderRequest.AccountID;
@@ -64,6 +76,15 @@ namespace ThucTap.Services.Implement
             orderUpdate.ActualPrice = totalAmount;
             dbContext.Update(orderUpdate);
             dbContext.SaveChanges();
+
+            orderDetailRequests.ForEach(x =>
+            {
+                var product = dbContext.Product.FirstOrDefault(y => y.ProductID == x.ProductID);
+                product.Quantity -= x.Quantity;
+                product.Purchases += x.Quantity;
+                dbContext.Update(product);
+                dbContext.SaveChanges();
+            });
 
             string listName = "";
             order.OrderDetails.ForEach(x =>
@@ -221,7 +242,7 @@ namespace ThucTap.Services.Implement
 
         public List<OrderGetAllDTO> GetAllOrderByID(int accountID)
         {
-            var listOrder = dbContext.Order.Where(x => x.AccountID == accountID);
+            var listOrder = dbContext.Order.Where(x => x.AccountID == accountID).OrderByDescending(x => x.OrderID);
             var listOrderGetAllDTO = listOrder.Select(orderGetAllConverter.EntityToDTO).ToList();
             return listOrderGetAllDTO;
         }
@@ -231,7 +252,18 @@ namespace ThucTap.Services.Implement
             var order = dbContext.Order.FirstOrDefault(x => x.OrderID == id);
             if (order == null)
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Order không tồn tại", null);
+            if(order.OrderStatusID != 1)
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Đơn hàng đã được vận chuyển, không thể hủy !", null);
 
+            var listOrderDetail = dbContext.OrderDetail.Where(x => x.OrderID == id).ToList();
+            listOrderDetail.ForEach(x =>
+            {
+                var product = dbContext.Product.FirstOrDefault(y => y.ProductID == x.ProductID);
+                product.Quantity += x.Quantity;
+                product.Purchases -= x.Quantity;
+                dbContext.Update(product);
+                dbContext.SaveChanges();
+            });
             dbContext.Remove(order);
             dbContext.SaveChanges();
             return responseObject.ResponseSucess("Hủy đơn hàng thành công", converter.EntityToDTO(order));

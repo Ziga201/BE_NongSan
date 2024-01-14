@@ -8,6 +8,7 @@ namespace ThucTap.Services.IServices
     public interface ICartService
     {
         ResponseObject<CartItemDTO> AddToCart(AddToCartRequest request);
+        ResponseObject<CartItemDTO> HandleQuantity(HandleQuantityRequest request);
         ResponseObject<Cart> DeleteCart(int accountID);
         ResponseObject<CartItemDTO> DeleteCartItem(int cartItemID);
 

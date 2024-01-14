@@ -23,6 +23,9 @@ namespace ThucTap.Services.Implement
             var account = dbContext.Account.FirstOrDefault(x => x.AccountID == request.AccountID);
             if (account == null)
                 return responseObject.ResponseError(StatusCodes.Status404NotFound,"Tài khoản không tồn tại", null);
+            var product = dbContext.Product.FirstOrDefault(x => x.ProductID == request.ProductID);
+            if (product == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Sản phẩm không tồn tại", null);
             var cart = dbContext.Cart.FirstOrDefault(x => x.AccountID == request.AccountID);
             if (cart == null)
             {
@@ -42,12 +45,16 @@ namespace ThucTap.Services.Implement
                 dbContext.Add(cartItem);
                 dbContext.SaveChanges();
             }
+            else if(cartItem.Quantity >= product.Quantity)
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Số lượng hàng trong kho không đủ", null);
             else
             {
                 cartItem.Quantity += 1;
                 dbContext.Update(cartItem);
                 dbContext.SaveChanges();
             }
+
+
             
             
             return responseObject.ResponseSucess("Thêm giỏ vào hàng thành công !", converter.EntityToDTO(cartItem));
@@ -81,6 +88,29 @@ namespace ThucTap.Services.Implement
             var cartItem = dbContext.CartItem.Where(x => x.CartID == cart.CartID);
             var cartItemDTO = cartItem.Select(converter.EntityToDTO).ToList();
             return cartItemDTO;
+        }
+
+        public ResponseObject<CartItemDTO> HandleQuantity(HandleQuantityRequest request)
+        {
+            var cart = dbContext.Cart.FirstOrDefault(x => x.AccountID == request.AccountID);
+            if(cart == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Cart không tồn tại!", null);
+            var cartItem = dbContext.CartItem.FirstOrDefault(x => x.CartID == cart.CartID && x.ProductID == request.ProductID);
+            if(cartItem == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "CartItem không tồn tại!", null);
+            if (request.Number == 0)
+            {
+                if (cartItem.Quantity == 1)
+                    dbContext.Remove(cartItem);
+                else
+                    cartItem.Quantity--;
+            }
+            else if(request.Number == 1)
+                cartItem.Quantity++;
+            dbContext.SaveChanges();
+            return responseObject.ResponseSucess("Cập nhật CartItem thành công !", converter.EntityToDTO(cartItem));
+
+
         }
     }
 }

@@ -43,6 +43,7 @@ namespace ThucTap.Services
             product.Discount = request.Discount;
             product.Status = request.Status;
             product.Quantity = request.Quantity?? 0;
+            product.Purchases = 0;
             product.CreatedAt = DateTime.Now;
             product.UpdateAt = DateTime.Now;
             dbContext.Add(product);

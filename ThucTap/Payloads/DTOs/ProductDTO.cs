@@ -12,5 +12,6 @@
         public int? Discount { get; set; }
         public string? Status { get; set; }
         public int? Quantity { get; set; }
+        public int? Purchases { get; set; }
     }
 }
