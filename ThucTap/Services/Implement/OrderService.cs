@@ -72,8 +72,7 @@ namespace ThucTap.Services.Implement
 
             var orderUpdate = dbContext.Order.FirstOrDefault(x => x.OrderID == order.OrderID);
 
-            orderUpdate.OriginalPrice = totalAmount;
-            orderUpdate.ActualPrice = totalAmount;
+            orderUpdate.TotalPrice = totalAmount;
             dbContext.Update(orderUpdate);
             dbContext.SaveChanges();
 
@@ -120,7 +119,7 @@ namespace ThucTap.Services.Implement
                 OrderDetail orderDetail = new OrderDetail();
                 orderDetail.OrderID = orderID;
                 orderDetail.ProductID = request.ProductID;
-                orderDetail.PriceTotal = product != null ? product.Price * request.Quantity : 0;
+                orderDetail.PriceTotal = product != null ? product.DiscountedPrice * request.Quantity : 0;
                 orderDetail.Quantity = request.Quantity;
                 orderDetail.CreatedAt = DateTime.Now;
                 orderDetail.UpdateAt = DateTime.Now;

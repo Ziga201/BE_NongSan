@@ -42,8 +42,14 @@ namespace ThucTap.Services
             product.Describe = request.Describe;
             product.Discount = request.Discount;
             product.Status = request.Status;
-            product.Quantity = request.Quantity?? 0;
+            product.Quantity = request.Quantity;
             product.Purchases = 0;
+            int discounted = request.Price - (int)(request.Price * request.Discount / 100);
+            product.DiscountedPrice = (int)Math.Floor((double)discounted / 1000) * 1000;
+
+
+
+
             product.CreatedAt = DateTime.Now;
             product.UpdateAt = DateTime.Now;
             dbContext.Add(product);
@@ -132,11 +138,14 @@ namespace ThucTap.Services
             product.ProductTypeID = request.ProductTypeID;
             product.NameProduct = request.NameProduct;
             product.Price = request.Price;
-            product.AvatarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            if(avatarFile != "") product.AvatarImageProduct = avatarFile;
+            //product.AvatarImageProduct = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             product.Describe = request.Describe;
             product.Discount = request.Discount;
             product.Status = request.Status;
-            product.Quantity = request.Quantity ?? 0;
+            product.Quantity = request.Quantity;
+            int discounted = request.Price - (int)(request.Price * request.Discount / 100);
+            product.DiscountedPrice = (int)Math.Floor((double)discounted / 1000) * 1000;
             product.CreatedAt = DateTime.Now;
             product.UpdateAt = DateTime.Now;
             dbContext.Update(product);
@@ -151,6 +160,11 @@ namespace ThucTap.Services
                 return null;
             var listDTO = list.Select(converter.EntityToDTO).ToList();
             return listDTO;
+        }
+
+        public IQueryable<ProductDTO> GetAll()
+        {
+            return dbContext.Product.Select(converterProduct.EntityToDTO).OrderBy(x => Guid.NewGuid()).AsQueryable();
         }
     }
 }

@@ -20,6 +20,7 @@ namespace ThucTap.Payloads.Converters
                 Title = blog.Title,
                 Content = blog.Content,
                 Image = blog.Image,
+                View = blog.View,
                 CreateAt = blog.CreateAt,
             };
         }

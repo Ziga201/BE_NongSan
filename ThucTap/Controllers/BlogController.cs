@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ThucTap.Entities;
+using ThucTap.Handle.Page;
 using ThucTap.Payloads.Requests.Blog;
 using ThucTap.Services.Implement;
 using ThucTap.Services.IServices;
@@ -18,24 +19,29 @@ namespace ThucTap.Controllers
             _service = new BlogService();
         }
         [HttpPost("AddBlog")]
-        public IActionResult AddBlog([FromForm] AddBlogRequest request)
+        public async Task<IActionResult> AddBlog([FromForm] AddBlogRequest request)
         {
-            return Ok(_service.AddBlog(request));
+            return Ok(await _service.AddBlog(request));
         }
         [HttpPut("UpdateBlog")]
-        public IActionResult UpdateBlog([FromForm] UpdateBlogRequest request)
+        public async Task<IActionResult> UpdateBlog([FromForm] UpdateBlogRequest request)
         {
-            return Ok(_service.UpdateBlog(request));
+            return Ok(await _service.UpdateBlog(request));
         }
         [HttpDelete("DeleteBlog/{id}")]
         public IActionResult DeleteBlog(int id)
         {
             return Ok(_service.DeleteBlog(id));
         }
-        [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        [HttpPut("UpdateViewBlog/{id}")]
+        public IActionResult UpdateViewBlog(int id)
         {
-            return Ok(_service.GetAll());
+            return Ok(_service.UpdateViewBlog(id));
+        }
+        [HttpGet("GetAll")]
+        public IActionResult GetAll([FromQuery]Pagination? pagination)
+        {
+            return Ok(_service.GetAll(pagination));
         }
         [HttpGet("GetAllByBlogTypeID/{id}")]
         public IActionResult GetAllByBlogTypeID(int id)

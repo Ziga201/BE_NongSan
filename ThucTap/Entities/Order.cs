@@ -7,8 +7,7 @@ namespace ThucTap.Entities
         public int OrderID { get; set; }
         public int PaymentID { get; set; }
         public int AccountID { get; set; }
-        public double? OriginalPrice { get; set; }
-        public double? ActualPrice { get; set; }
+        public double? TotalPrice { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }

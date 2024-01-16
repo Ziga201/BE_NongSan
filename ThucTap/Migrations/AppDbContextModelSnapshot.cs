@@ -108,6 +108,9 @@ namespace ThucTap.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("View")
+                        .HasColumnType("int");
+
                     b.HasKey("BlogID");
 
                     b.HasIndex("AccountID");
@@ -273,9 +276,6 @@ namespace ThucTap.Migrations
                     b.Property<int>("AccountID")
                         .HasColumnType("int");
 
-                    b.Property<double?>("ActualPrice")
-                        .HasColumnType("float");
-
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -294,15 +294,15 @@ namespace ThucTap.Migrations
                     b.Property<int>("OrderStatusID")
                         .HasColumnType("int");
 
-                    b.Property<double?>("OriginalPrice")
-                        .HasColumnType("float");
-
                     b.Property<int>("PaymentID")
                         .HasColumnType("int");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("TotalPrice")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
@@ -417,12 +417,15 @@ namespace ThucTap.Migrations
                     b.Property<int?>("Discount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("DiscountedPrice")
+                        .HasColumnType("int");
+
                     b.Property<string>("NameProduct")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductTypeID")
                         .HasColumnType("int");

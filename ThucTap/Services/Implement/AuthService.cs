@@ -8,6 +8,7 @@ using ThucTap.Handle.Image;
 using ThucTap.Handle.Send;
 using ThucTap.Handle.Validate;
 using ThucTap.IServices;
+using ThucTap.Migrations;
 using ThucTap.Payloads.Converters;
 using ThucTap.Payloads.DTOs;
 using ThucTap.Payloads.Requests;
@@ -241,7 +242,8 @@ namespace ThucTap.Services
             account.Email = request.Email;
             account.Status = request.Status ?? "ACTIVE";
             account.DecentralizationID = request.DecentralizationID ?? 1;
-            account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            if (avatarFile != "") account.Avatar = avatarFile;
+            //account.Avatar = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             account.FullName = request.FullName;
             account.Phone = request.Phone;
             account.Address = request.Address;

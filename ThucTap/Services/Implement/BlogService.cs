@@ -1,6 +1,9 @@
-﻿using Microsoft.Identity.Client;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Identity.Client;
 using ThucTap.Entities;
 using ThucTap.Handle.Image;
+using ThucTap.Handle.Page;
+using ThucTap.Migrations;
 using ThucTap.Payloads.Converters;
 using ThucTap.Payloads.DTOs;
 using ThucTap.Payloads.Requests.Blog;
@@ -34,6 +37,7 @@ namespace ThucTap.Services.Implement
             blog.Title = request.Title;
             blog.Content = request.Content;
             blog.Image = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            blog.View = 0;
             blog.CreateAt = DateTime.Now;
             dbContext.Add(blog);
             dbContext.SaveChanges();
@@ -51,9 +55,12 @@ namespace ThucTap.Services.Implement
             return responseObject.ResponseSucess("Xoá bài viết thành công", converter.EntityToDTO(blog));
         }
 
-        public List<BlogDTO> GetAll()
+        public PageResult<BlogDTO> GetAll(Pagination? pagination)
         {
-            return dbContext.Blog.Select(converter.EntityToDTO).ToList();
+            var listBlog = dbContext.Blog.Select(converter.EntityToDTO);
+            var result = PageResult<BlogDTO>.ToPageResult(pagination, listBlog);
+            pagination.TotalCount = listBlog.Count();
+            return new PageResult<BlogDTO>(pagination, result);
         }
 
         public List<BlogDTO> GetAllByBlogTypeID(int id)
@@ -86,11 +93,23 @@ namespace ThucTap.Services.Implement
             blog.AccountID = request.AccountID;
             blog.Title = request.Title;
             blog.Content = request.Content;
-            blog.Image = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
+            if (avatarFile != "") blog.Image = avatarFile;
+            //blog.Image = avatarFile == "" ? "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg" : avatarFile;
             blog.CreateAt = DateTime.Now;
             dbContext.Update(blog);
             dbContext.SaveChanges();
             return responseObject.ResponseSucess("Sửa bài viết thành công", converter.EntityToDTO(blog));
+        }
+
+        public ResponseObject<BlogDTO> UpdateViewBlog(int id)
+        {
+            var blog = dbContext.Blog.FirstOrDefault(x => x.BlogID == id);
+            if (blog == null)
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Bài viết không tồn tại", null);
+            blog.View += 1;
+            dbContext.Update(blog);
+            dbContext.SaveChanges();
+            return responseObject.ResponseSucess("Cập nhật lượt xem", converter.EntityToDTO(blog));
         }
     }
 }

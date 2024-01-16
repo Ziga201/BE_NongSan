@@ -26,7 +26,8 @@ namespace ThucTap.Handle.Image
                 {
                     File = new FileDescription(file.FileName, stream),
                     PublicId = "product" + "_" + DateTime.Now.Ticks,
-                    Transformation = new Transformation().Width(300).Height(400).Crop("fill")
+                    //Transformation = new Transformation().Width(300).Height(400).Crop("fill")
+                    Transformation = new Transformation()
                 };
                 var uploadResult = await UploadImage._cloudinary.UploadAsync(uploadParams);
                 if (uploadResult.Error != null)

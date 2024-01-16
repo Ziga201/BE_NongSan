@@ -21,6 +21,7 @@ namespace ThucTap.Payloads.Converters
                 Status = product.Status,
                 Quantity = product.Quantity,
                 Purchases = product.Purchases,
+                DiscountedPrice = product.DiscountedPrice,
             };
         }
     }
