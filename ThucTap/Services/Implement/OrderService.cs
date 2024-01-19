@@ -106,7 +106,7 @@ namespace ThucTap.Services.Implement
 
             }
             else
-                return responseObject.ResponseSucess("http://localhost:3000/confirm", converter.EntityToDTO(order));
+                return responseObject.ResponseSucess("/confirm", converter.EntityToDTO(order));
 
 
         }
@@ -188,7 +188,7 @@ namespace ThucTap.Services.Implement
         private string GetPayment(double totalAmount, int orderID)
         {
             //Get Config Info
-            string vnp_Returnurl = $"http://localhost:3000/confirm/";
+            string vnp_Returnurl = $"https://fe-nong-san.vercel.app/confirm";
             string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; //URL thanh toan cua VNPAY 
             string vnp_TmnCode = "ADKF5BBF"; //Ma website
             string vnp_HashSecret = "BSTZNVIFXKNXZXBSJTNLHJIOJRJGDQMY"; //Chuoi bi mat
