@@ -254,8 +254,8 @@ namespace ThucTap.Services.Implement
             var order = dbContext.Order.FirstOrDefault(x => x.OrderID == id);
             if (order == null)
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Order không tồn tại", null);
-            if(order.OrderStatusID != 1)
-                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Đơn hàng đã được vận chuyển, không thể hủy !", null);
+            //if(order.OrderStatusID != 1)
+            //    return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Đơn hàng đã được vận chuyển, không thể hủy !", null);
 
             var listOrderDetail = dbContext.OrderDetail.Where(x => x.OrderID == id).ToList();
             listOrderDetail.ForEach(x =>
