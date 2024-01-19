@@ -106,7 +106,7 @@ namespace ThucTap.Services.Implement
 
             }
             else
-                return responseObject.ResponseSucess("/confirm", converter.EntityToDTO(order));
+                return responseObject.ResponseSucess("https://fe-nong-san.vercel.app/confirm", converter.EntityToDTO(order));
 
 
         }

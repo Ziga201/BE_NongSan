@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Controller_SelectedScaffolderID>ApiControllerEmptyScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Common/Api</Controller_SelectedScaffolderCategoryPath>
-    <NameOfLastUsedPublishProfile>D:\HOC\LTS\ThucTap\ThucTap\Properties\PublishProfiles\tungpts-001-site1 - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>D:\HOC\LTS\ThucTap\ThucTap\Properties\PublishProfiles\tungpts-001-site1 - FTP.pubxml</NameOfLastUsedPublishProfile>
     <ActiveDebugProfile>ThucTap</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ThucTap")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+302f7ca27de654fa47c63dfd57b0c413aaa3c339")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+71e96b5149bd4f7c8b486171ef72f21a9b28d8e8")]
 [assembly: System.Reflection.AssemblyProductAttribute("ThucTap")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ThucTap")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
