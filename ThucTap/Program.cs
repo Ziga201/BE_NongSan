@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -16,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 builder.Services.AddHttpContextAccessor();
+
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
@@ -38,16 +41,25 @@ builder.Services.AddScoped<IProductService, ProductService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+app.UseDeveloperExceptionPage();
+app.UseSwagger();
+app.UseSwaggerUI();
+
+
 app.UseCors(options => options
-.WithOrigins("http://localhost:3000") // Thêm domain của ứng dụng React của bạn    
-                                      //.AllowAnyOrigin()
+    //.WithOrigins("http://localhost:3000")  
+    //.WithOrigins("https://tungpts-001-site1.atempurl.com/")
+    //.WithOrigins("https://fe-nong-san.vercel.app")
+    .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
+
+//app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

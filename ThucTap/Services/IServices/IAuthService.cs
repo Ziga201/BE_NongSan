@@ -12,7 +12,7 @@ namespace ThucTap.IServices
         ResponseObject<RegisterDTO> Register(RegisterRequest request);
         TokenDTO GenerateAccessToken(Account account);
         ResponseObject<TokenDTO> RenewAccessToken(RenewAccessTokenRequest request);
-        ResponseObject<TokenDTO> Login(LoginRequest request);
+        Task<ResponseObject<TokenDTO>> Login(LoginRequest request);
         IQueryable<RegisterDTO> GetAll();
         ResponseObject<MailDTO> SendCode(string email);
         ResponseObject<RegisterDTO> ActiveAccount(ActiveAccountRequest request);

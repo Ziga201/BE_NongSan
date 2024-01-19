@@ -23,9 +23,9 @@ namespace ThucTap.Controllers
             return Ok(_service.Register(request));
         }
         [HttpPut("Login")]
-        public IActionResult Login([FromForm] LoginRequest request)
+        public async Task<IActionResult> Login([FromForm]LoginRequest request)
         {
-            return Ok(_service.Login(request));
+            return Ok(await _service.Login(request));
         }
         [HttpPut("RenewAccessToken")]
         public IActionResult RenewAccessToken([FromForm] RenewAccessTokenRequest request)

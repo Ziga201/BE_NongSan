@@ -23,8 +23,9 @@ namespace ThucTap.Context
         public virtual DbSet<Message> Message { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer($"Server = ZIGA\\SQLEXPRESS; Database = QLBanNongSan; Trusted_Connection = True; " +
-                $"TrustServerCertificate=True");
+            //optionsBuilder.UseSqlServer($"Server = ZIGA\\SQLEXPRESS; Database = QLBanNongSan; Trusted_Connection = True; " +
+            //    $"TrustServerCertificate=True");            
+            optionsBuilder.UseSqlServer($"Data Source=SQL5112.site4now.net,1433;Initial Catalog=db_aa423c_login;User Id=db_aa423c_login_admin;Password=Nametung1!;");
         }
     }
 }

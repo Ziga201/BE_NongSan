@@ -45,8 +45,10 @@ namespace ThucTap.Services
 
         public TokenDTO GenerateAccessToken(Account account)
         {
+            string secretKey = "ploboocyuvdwxjumbyprpwuvwsfuvfrp";
             var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var secretKeyBytes = System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:SecretKey").Value!);
+            //var secretKeyBytes = System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:SecretKey").Value!);            
+            var secretKeyBytes = System.Text.Encoding.UTF8.GetBytes(secretKey);
 
             var role = dbContext.Decentralization.FirstOrDefault(x => x.DecentralizationID == account.DecentralizationID);
             var tokenDescription = new SecurityTokenDescriptor
@@ -57,6 +59,7 @@ namespace ThucTap.Services
                     new Claim("Username", account.UserName),
                     new Claim(ClaimTypes.Role, role.AuthorityName)
                 }),
+                NotBefore = DateTime.Now,
                 Expires = DateTime.Now.AddHours(4),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -85,6 +88,47 @@ namespace ThucTap.Services
             return tokenDTO;
         }
 
+        //public TokenDTO GenerateAccessToken(Account account)
+        //{
+        //    string secretKey = "ploboocyuvdwxjumbyprpwuvwsfuvfrp";
+
+
+        //    var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey));
+
+        //    var algorithm = SecurityAlgorithms.HmacSha256;
+
+        //    var credentials = new SigningCredentials(key, algorithm);
+        //    var role = dbContext.Decentralization.FirstOrDefault(x => x.DecentralizationID == account.DecentralizationID);
+        //    var tokenDescription = new SecurityTokenDescriptor
+        //    {
+        //        Subject = new ClaimsIdentity(new[]
+        //        {
+        //            new Claim("Id", account.AccountID.ToString()),
+        //            new Claim("Username", account.UserName),
+        //            new Claim(ClaimTypes.Role, role.AuthorityName)
+        //        }),
+        //        NotBefore = DateTime.UtcNow,
+        //        Expires = DateTime.UtcNow.AddHours(4),
+        //        SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+        //    };
+
+
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    var token = tokenHandler.CreateToken(tokenDescription);
+
+        //    var accessToken  = tokenHandler.WriteToken(token);
+
+        //    TokenDTO tokenDTO = new TokenDTO
+        //    {
+        //        AccessToken = accessToken,
+        //        RefreshToken = "aaa"
+        //    };
+        //    return tokenDTO;
+        //}
+
+
+
+
 
         public ResponseObject<RegisterDTO> Register(RegisterRequest request)
         {
@@ -104,7 +148,7 @@ namespace ThucTap.Services
 
             Account account = new Account();
             account.UserName = request.UserName;
-            account.Password = BCryptNet.HashPassword(request.Password);
+            account.Password = request.Password;
             account.Email = request.Email;
             account.Status = nameof(Enum.Status.INACTIVE);
             account.DecentralizationID = 1;
@@ -157,15 +201,15 @@ namespace ThucTap.Services
             return responseTokenObject.ResponseSucess("Tạo mới Token thành công", GenerateAccessToken(account));
         }
 
-        public ResponseObject<TokenDTO> Login(LoginRequest request)
+        public async Task<ResponseObject<TokenDTO>> Login(LoginRequest request)
         {
-            var account = dbContext.Account.FirstOrDefault(x => x.UserName == request.UserName);
+            var account = await dbContext.Account.FirstOrDefaultAsync(x => x.UserName == request.UserName);
             if (account == null)
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản hoặc mật khẩu không chính xác", null);
             if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Vui lòng điền đầy đủ thông tin đăng nhập", null);
-            bool checkPass = BCryptNet.Verify(request.Password, account.Password);
-            if (!checkPass)
+            //bool checkPass = BCryptNet.Verify(request.Password, account.Password);
+            if (request.Password != account.Password)
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản hoặc mật khẩu không chính xác", null);
             if (account.Status == nameof(Enum.Status.INACTIVE))
                 return responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "tài khoản chưa được kích hoạt", null);
@@ -238,7 +282,7 @@ namespace ThucTap.Services
             var avatarFile = await UploadImage.Upfile(request.Avatar);
 
 
-            account.Password = BCryptNet.HashPassword(request.Password);
+            account.Password = request.Password;
             account.Email = request.Email;
             account.Status = request.Status ?? "ACTIVE";
             account.DecentralizationID = request.DecentralizationID ?? 1;
@@ -288,7 +332,8 @@ namespace ThucTap.Services
 
             Account account = new Account();
             account.UserName = request.UserName;
-            account.Password = BCryptNet.HashPassword(request.Password);
+            //account.Password = BCryptNet.HashPassword(request.Password);
+            account.Password = request.Password;
             account.Email = request.Email;
             account.Status = request.Status;
             account.DecentralizationID = request.DecentralizationID;
@@ -325,7 +370,7 @@ namespace ThucTap.Services
             dbContext.Update(confirm);
             dbContext.SaveChanges();
 
-            account.Password = BCryptNet.HashPassword(request.NewPassword);
+            account.Password = request.NewPassword;
             dbContext.Update(account);
             dbContext.SaveChanges();
             return responseObject.ResponseSucess("Cập nhật mật khẩu mới thành công, mời bạn đăng nhập", converter.EntityToDTO(account));
