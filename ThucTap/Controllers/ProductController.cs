@@ -65,9 +65,9 @@ namespace ThucTap.Controllers
             return Ok(_service.DeleteProduct(id));
         }
         [HttpPost("AddProductReview")]
-        public IActionResult AddProductReview([FromForm] AddProductReviewRequest request)
+        public async Task<IActionResult> AddProductReview([FromForm] AddProductReviewRequest request)
         {
-            return Ok(_service.AddProductReview(request));
+            return Ok(await _service.AddProductReview(request));
 
         }
         [HttpGet("NumberOfPurchases")]

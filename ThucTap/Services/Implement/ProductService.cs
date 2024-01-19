@@ -63,6 +63,8 @@ namespace ThucTap.Services
                 return responseProductReviewObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy sản phẩm", null);
             if (!dbContext.Account.Any(x => x.AccountID == request.AccountID))
                 return responseProductReviewObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy người dùng", null);
+            if(request.PointEvaluation < 1 || request.PointEvaluation > 5)
+                return responseProductReviewObject.ResponseError(StatusCodes.Status400BadRequest, "Đánh giá từ 1 -> 5 sao", null);
             var avatarFile = await UploadImage.Upfile(request.Image);
 
             ProductReview productReview = new ProductReview();
