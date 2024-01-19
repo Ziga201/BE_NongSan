@@ -3,6 +3,7 @@ using CloudinaryDotNet;
 using System;
 using System.Numerics;
 using ThucTap.Entities;
+using ThucTap.Handle.Page;
 using ThucTap.Handle.Payment;
 using ThucTap.Handle.Send;
 using ThucTap.Payloads.Converters;
@@ -160,11 +161,13 @@ namespace ThucTap.Services.Implement
             return total;
         }
 
-        public List<OrderGetAllDTO> GetAll()
+        public PageResult<OrderGetAllDTO> GetAll(Pagination? pagination)
         {
             var listOrder = dbContext.Order.ToList();
-            var listOrderDTO = listOrder.Select(orderGetAllConverter.EntityToDTO).ToList();
-            return listOrderDTO;
+            var listOrderDTO = listOrder.Select(orderGetAllConverter.EntityToDTO).OrderByDescending(x => x.OrderID).ToList();
+            var result = PageResult<OrderGetAllDTO>.ToPageResult(pagination, listOrderDTO);
+            pagination.TotalCount = listOrderDTO.Count();
+            return new PageResult<OrderGetAllDTO>(pagination, result);
         }
 
         public ResponseObject<OrderDTO> ChangeOrderStatus(int id)

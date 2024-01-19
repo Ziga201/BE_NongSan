@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ThucTap.Handle.Page;
 using ThucTap.Payloads.Requests.Order;
 using ThucTap.Services.Implement;
 using ThucTap.Services.IServices;
@@ -28,9 +29,9 @@ namespace ThucTap.Controllers
             return Ok(service.Order(orderRequest, orderDetailRequest));
         }
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery]Pagination? pagination)
         {
-            return Ok(service.GetAll());
+            return Ok(service.GetAll(pagination));
         }
          [HttpGet("GetAllOrderByID/{accountID}")]
         public IActionResult GetAllOrderByID(int accountID)
